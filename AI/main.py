@@ -3,11 +3,17 @@
 import argparse
 import logging
 from Messenger import Messenger
+from State import State
 
 LOG_FILENAME = 'log.log'
 
+messenger = None
+state = State()
+
 
 def main():
+    global messenger, state
+
     # set up logging
     logging.basicConfig(level=logging.DEBUG,)
     logging.StreamHandler().setLevel(logging.DEBUG)
@@ -29,9 +35,20 @@ def main():
     args = parser.parse_args()
     logging.debug("Arguments: %s", args)
 
-    messenger = Messenger(port=args.port, host='localhost')
-    messenger.shoot(1)
-    messenger.obstacles()
+    messenger = Messenger(port=args.port, host='localhost', state=state)
+    init_state()
+
+
+def init_state():
+    global messenger, state
+    logging.debug("Initializing state.")
+
+    messenger.mytanks()
+    logging.debug("mytanks: " + str(state.mytanks))
+
+    messenger.bases()
+
+
 
 if __name__ == '__main__':
     main()
