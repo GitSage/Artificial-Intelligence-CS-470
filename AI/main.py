@@ -4,6 +4,7 @@ import argparse
 import logging
 from Messenger import Messenger
 from State import State
+import time
 
 LOG_FILENAME = 'log.log'
 
@@ -38,6 +39,42 @@ def main():
     messenger = Messenger(port=args.port, host='localhost', state=state)
     init_state()
 
+    # timer
+    TIME_PER_SLEEP = 1
+    elapsed = 0
+    go_timer = 0
+    shoot_timer = 0
+    turn_timer = 0
+    TANK = 8
+
+
+    while 1:
+        if go_timer == 0:
+            messenger.speed(TANK, 1)
+
+        if go_timer == 3:
+            messenger.speed(TANK, 0)
+
+        if go_timer == 6:
+            go_timer = -1
+
+        if turn_timer == 5:
+            messenger.angvel(TANK, 1)
+
+        if turn_timer == 7:
+            messenger.angvel(TANK, 0)
+            turn_timer = 0
+
+        if shoot_timer == 0:
+            pass
+
+
+
+        time.sleep(TIME_PER_SLEEP)
+        go_timer += TIME_PER_SLEEP
+        turn_timer += TIME_PER_SLEEP
+
+
 
 def init_state():
     global messenger, state
@@ -47,6 +84,10 @@ def init_state():
     logging.debug("mytanks: " + str(state.mytanks))
 
     messenger.bases()
+
+def really_dumb_agent():
+    messenger.speed(1, 0)
+
 
 
 
