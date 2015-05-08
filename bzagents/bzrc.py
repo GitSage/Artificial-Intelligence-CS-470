@@ -421,7 +421,7 @@ class BZRC:
         """Send commands for a bunch of tanks in a network-optimized way."""
         for cmd in commands:
             self.sendline('speed %s %s' % (cmd.index, cmd.speed))
-            self.sendline('angvel %s %s' % (cmd.index, cmd.angvel))
+            self.sendline('angvel %s %s' % (cmd.index, cmd.set_angvel))
             if cmd.shoot:
                 self.sendline('shoot %s' % cmd.index)
 

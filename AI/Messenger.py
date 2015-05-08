@@ -4,11 +4,10 @@ from BZSocket import BZSocket
 
 class Messenger:
 
-    def __init__(self, port, host, state):
+    def __init__(self, port, host):
         self.port = port
         self.host = host
         self.sock = BZSocket(port=port, host=host)
-        self.state = state
         logging.debug("Messenger created with parameters port=%d, host=%s")
 
     def shoot(self, tank):
@@ -43,7 +42,7 @@ class Messenger:
 
     def mytanks(self):
         msg = self.get_list_from_response(self.sock.send("mytanks"))
-        self.state.update_mytanks(msg)
+        return msg
 
     def othertanks(self):
         self.sock.send("othertanks")

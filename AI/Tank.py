@@ -2,7 +2,8 @@
 
 class Tank:
 
-    def __init__(self, index, callsign, status, shots_available, time_to_reload, flag, x, y, angle, vx, vy, angvel):
+    def __init__(self, index, callsign, status, shots_available, time_to_reload, flag, x, y, angle, vx, vy, angvel,
+                 messenger):
         self.index = int(index)
         self.callsign = callsign
         self.status = status
@@ -15,9 +16,19 @@ class Tank:
         self.vx = float(vx)
         self.vy = float(vy)
         self.angvel = float(angvel)
+        self.messenger = messenger
 
     def update(self, index, callsign, status, shots_available, time_to_reload, flag, x, y, angle, vx, vy, angvel):
         self.__init__(index, callsign, status, shots_available, time_to_reload, flag, x, y, angle, vx, vy, angvel)
 
+    def shoot(self):
+        self.messenger.shoot(self.index)
+
+    def speed(self, speed):
+        self.messenger.speed(self.index, speed)
+
+    def set_angvel(self, angvel):
+        self.messenger.angvel(self.index, angvel)
+
     def __repr__(self):
-        return "tank"
+        return "tank %d" % self.index

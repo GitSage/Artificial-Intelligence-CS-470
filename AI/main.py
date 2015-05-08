@@ -2,26 +2,18 @@
 
 import argparse
 import logging
+from Timer import Timer
 from Messenger import Messenger
 from State import State
-import time
 
 LOG_FILENAME = 'log.log'
-
+TIME_PER_SLEEP = 1
+hello_var = 0
+state = None
 messenger = None
-state = State()
 
 
-def main():
-    global messenger, state
-
-    # set up logging
-    logging.basicConfig(level=logging.DEBUG,)
-    logging.StreamHandler().setLevel(logging.DEBUG)
-    logging.FileHandler(LOG_FILENAME).setLevel(logging.DEBUG)
-
-    logging.debug('Starting main.')
-
+def parse_args():
     # analyze arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--spread-out',
@@ -35,61 +27,40 @@ def main():
                         required=True)
     args = parser.parse_args()
     logging.debug("Arguments: %s", args)
+    return args
 
-    messenger = Messenger(port=args.port, host='localhost', state=state)
+
+def main():
+    global messenger, state, TIME_PER_SLEEP
+
+    init_logging()
+    args = parse_args()
+
+    timer = Timer(TIME_PER_SLEEP)
+    messenger = Messenger(args.port, 'localhost')
+    state = State(messenger)
     init_state()
 
-    # timer
-    TIME_PER_SLEEP = 1
-    elapsed = 0
-    go_timer = 0
-    shoot_timer = 0
-    turn_timer = 0
-    TANK = 8
-
+    timer.add_task(timer.really_dumb_agent, state.mytanks['1'])
+    timer.add_task(timer.really_dumb_agent, state.mytanks['2'])
 
     while 1:
-        if go_timer == 0:
-            messenger.speed(TANK, 1)
-
-        if go_timer == 3:
-            messenger.speed(TANK, 0)
-
-        if go_timer == 6:
-            go_timer = -1
-
-        if turn_timer == 5:
-            messenger.angvel(TANK, 1)
-
-        if turn_timer == 7:
-            messenger.angvel(TANK, 0)
-            turn_timer = 0
-
-        if shoot_timer == 0:
-            pass
-
-
-
-        time.sleep(TIME_PER_SLEEP)
-        go_timer += TIME_PER_SLEEP
-        turn_timer += TIME_PER_SLEEP
-
+        timer.tick()
 
 
 def init_state():
-    global messenger, state
+    global state
     logging.debug("Initializing state.")
-
-    messenger.mytanks()
+    state.update_mytanks()
     logging.debug("mytanks: " + str(state.mytanks))
 
     messenger.bases()
 
-def really_dumb_agent():
-    messenger.speed(1, 0)
-
-
-
+def init_logging():
+    logging.basicConfig(level=logging.DEBUG, )
+    logging.StreamHandler().setLevel(logging.DEBUG)
+    logging.FileHandler(LOG_FILENAME).setLevel(logging.DEBUG)
+    logging.debug('Starting main.')
 
 if __name__ == '__main__':
     main()
