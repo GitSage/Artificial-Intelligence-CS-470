@@ -1,11 +1,12 @@
+
 __author__ = 'lexic92'
 
 import matplotlib.pyplot as plt
 import numpy
 import math
+from PotentialFields.model import Goal
 
 class AttractiveFields():
-
 
     def _generateAttractiveFieldGraph(self):
         # CODE FROM WALTER'S EXAMPLE IN SIMPLE.PY (UNMODIFIED, except for some parameters Ben might have modified)
@@ -13,10 +14,13 @@ class AttractiveFields():
         ax = fig.add_subplot(111)
 
         #generate grid
-        x = numpy.linspace(-2, 2, 100)
-        y = numpy.linspace(-1.5, 1.5, 24)
+        x = numpy.linspace(-2, 2, 2)
+        y = numpy.linspace(-1.5, 1.5, 2)
         x, y = numpy.meshgrid(x, y)
 
+        print x
+        print '----'
+        print y
 
         #--------------------------MY CODE----------------------------
         #initialize vectors (actually just lists)
@@ -24,7 +28,7 @@ class AttractiveFields():
         vy = []
 
         #Loop from 0 to x.length-1, therefore running x.length times:
-        for i in range(0, x.length):
+        for i in range(0, x.size):
             sum_vx = 0 #Add all of the attractive fields and sum them up for each given position
             sum_vy = 0 #Add all of the attractive fields and sum them up for each given position
 
@@ -68,3 +72,11 @@ class AttractiveFields():
         #do stuff
         self._generateAttractiveFieldGraph()
     #------------------------------------------------------------
+
+
+
+if __name__ == "__main__":
+    #TEST CASE runs when this file is run individually.
+    goals = []
+    goals.append(Goal.Goal(0, 0, 1, 2))
+    AttractiveFields(goals)

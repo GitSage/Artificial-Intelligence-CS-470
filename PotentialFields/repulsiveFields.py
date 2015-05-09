@@ -3,6 +3,7 @@ __author__ = 'lexic92'
 import matplotlib.pyplot as plt
 import numpy
 import math
+from PotentialFields.model import Obstacle
 
 class RepulsiveFields():
     def sign(self, argument):
@@ -38,7 +39,7 @@ class RepulsiveFields():
 
         #Loop from 0 to x.length-1, therefore running x.length times:
         # (ASSUMING THAT x AND y VECTORS HAVE THE SAME NUMBER OF ITEMS (THEY SHOULD))
-        for i in range(0, x.length):
+        for i in range(0, x.size):
             sum_vx = 0 #Add all of the repulsive fields and sum them up for each given position
             sum_vy = 0 #Add all of the repulsive fields and sum them up for each given position
             
@@ -78,6 +79,15 @@ class RepulsiveFields():
         self._FILE_NAME = 'repulsive_fields.png' #File name to save the figure as.
         self._obstacles = obstacles #List of "Obstacle" objects to make a repulsive field of.
         self._beta = 1 #For scaling the vx and vy values for repulsive fields.
+
         #do stuff
         self._generateRepulsiveFieldGraph()
     #------------------------------------------------------------
+
+
+
+if __name__ == "__main__":
+    #TEST CASE runs when this file is run individually.
+    obstacles = []
+    obstacles.append(Obstacle.Obstacle(2, 1.5, 1, 2))
+    RepulsiveFields(obstacles)

@@ -3,8 +3,9 @@ __author__ = 'lexic92'
 import matplotlib.pyplot as plt
 import numpy
 import math
+from PotentialFields.model import Obstacle, Goal
 
-class RepulsiveFields():
+class AttractiveAndRepulsiveFields():
     def sign(self, argument):
         '''
         Returns the sign of the argument. Intended for use in multiplication (because you can
@@ -38,7 +39,7 @@ class RepulsiveFields():
 
         #Loop from 0 to x.length-1, therefore running x.length times:
         # (ASSUMING THAT x AND y VECTORS HAVE THE SAME NUMBER OF ITEMS (THEY SHOULD))
-        for i in range(0, x.length):
+        for i in range(0, x.size):
             sum_vx = 0 #Add all of the attractive AND repulsive fields and sum them up for each given position
             sum_vy = 0 #Add all of the attractive AND repulsive fields and sum them up for each given position
 
@@ -100,6 +101,16 @@ class RepulsiveFields():
         self._obstacles = obstacles #List of "Obstacle" objects to make a repulsive field of.
         self._alpha = 1 #For scaling the vx and vy values for attractive fields.
         self._beta = 1 #For scaling the vx and vy values for repulsive fields.
+
         #do stuff
         self._generateAttractiveAndRepulsiveFieldGraph()
     #------------------------------------------------------------
+
+
+if __name__ == "__main__":
+    #TEST CASE runs when this file is run individually.
+    goals = []
+    goals.append(Goal.Goal(0, 0, 1, 2))
+    obstacles = []
+    obstacles.append(Obstacle.Obstacle(2, 1.5, 1, 2))
+    AttractiveAndRepulsiveFields(goals, obstacles)
