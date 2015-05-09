@@ -1,6 +1,6 @@
 __author__ = 'lexic92'
 
-import math
+import numpy
 
 class Goal():
 
@@ -11,13 +11,13 @@ class Goal():
         :param y: y cooredinate of object
         :return: d (magnitude of the distance from object to this goal)
         '''
-        return math.sqrt((x - self._x)**2 + (y - self._y)**2)
+        return numpy.sqrt((x - self._x)**2 + (y - self._y)**2)
 
     def getAngleToGoalFrom(self, x, y):
-        return math.atan2(self._y - y, self._x - x)
+        return numpy.arctan2(self._y - y, self._x - x)
 
     def __init__(self, x, y, radius, spread):
-        self._x = x #the x-coordinate of the center of the goal object.
-        self._y = y #the y-coordinate of the center of the goal object.
-        self._radius = radius
+        self._x = x # the x-coordinate of the center of the goal object.
+        self._y = y # the y-coordinate of the center of the goal object.
+        self.radius = radius
         self._spread = spread
