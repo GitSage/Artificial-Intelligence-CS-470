@@ -52,15 +52,19 @@ def init_state():
     global state
     logging.debug("Initializing state.")
     state.update_mytanks()
-    logging.debug("mytanks: " + str(state.mytanks))
+    state.update_obstacles()
+    state.update_flags()
+    logging.debug("state: " + str(state))
 
     messenger.bases()
 
+
 def init_logging():
-    logging.basicConfig(level=logging.DEBUG, )
+    logging.basicConfig(level=logging.DEBUG)
     logging.StreamHandler().setLevel(logging.DEBUG)
     logging.FileHandler(LOG_FILENAME).setLevel(logging.DEBUG)
     logging.debug('Starting main.')
+
 
 if __name__ == '__main__':
     main()

@@ -299,7 +299,7 @@ class Handler(asynchat.async_chat):
             self.push('fail\n')
             return
         self.ack(command, tankid, value)
-        self.team.set_angvel(tankid, value)
+        self.team.angvel(tankid, value)
         self.push('ok\n')
 
     def bzrc_teams(self, args):
@@ -553,7 +553,7 @@ class Handler(asynchat.async_chat):
             data['y'] = int(tank.pos[1])
             data['angle'] = self.normalize_angle(tank.rot)
             data['vx'],data['vy'] = tank.velocity()
-            data['angvel'] = tank.set_angvel
+            data['angvel'] = tank.angvel
             response.append(entry_template % data)
         response.append('end\n')
         self.push(''.join(response))
@@ -602,7 +602,7 @@ class Handler(asynchat.async_chat):
                 data['vx'] = random.gauss(vx, self.team.velnoise)
                 data['vy'] = random.gauss(vy, self.team.velnoise)
 
-                data['angvel'] = tank.set_angvel
+                data['angvel'] = tank.angvel
 
                 response.append(entry_template % data)
 

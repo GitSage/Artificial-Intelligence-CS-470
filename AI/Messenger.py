@@ -29,13 +29,14 @@ class Messenger:
         self.sock.send("teams")
 
     def obstacles(self):
-        self.sock.send("obstacles")
+        msg = self.get_list_from_response(self.sock.send("obstacles"))
+        return msg
 
     def bases(self):
         self.sock.send("bases")
 
-    def flag(self):
-        self.sock.send("flags")
+    def flags(self):
+        return self.get_list_from_response(self.sock.send("flags"))
 
     def shots(self):
         self.sock.send("shots")
