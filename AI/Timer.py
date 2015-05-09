@@ -1,5 +1,4 @@
 import time
-from PotentialFieldCalculator import PotentialFieldCalculator
 
 __author__ = 'ben'
 
@@ -9,7 +8,7 @@ class Timer:
     def __init__(self, time_per_sleep):
         self.TIME_PER_SLEEP = time_per_sleep
         self.really_dumb_timers = {}
-        # self.potential_field_calculator = PotentialFieldCalculator()
+        self.pfc = None
         self.todo = []
 
     def tick(self):
@@ -21,10 +20,13 @@ class Timer:
     def add_task(self, task, args):
         self.todo.append(Task(task, args))
 
-    def potential_fields_move(self, tank, goal):
+    def potential_fields_move(self, tank):
         # self.potential_fields_calculator =
-        next_action = self.potential_fields_calculator.get_next_action(tank.x, tank.y)
+        next_action = self.pfc.get_next_action(tank.x, tank.y)
         tank.dir = next_action['dir']
+
+    def set_pfc(self, pfc):
+        self.pfc = pfc
 
     def really_dumb_agent(self, tank):
 
