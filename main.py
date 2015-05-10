@@ -1,18 +1,17 @@
 # Runs an AI that will KICK YOUR BUTT.
 
 import argparse
-import logging
 import threading
 import subprocess
 import time
-from AI.Timer import Timer
 from AI.Messenger import Messenger
 from AI.State import State
-from AI.PotentialFieldCalculator import *
+from AI.Agents import *
 
 
+PLAYER = 'blue'
 LOG_FILENAME = 'log.log'
-TIME_PER_SLEEP = 1
+TIME_PER_SLEEP = .25
 hello_var = 0
 state = None
 messenger = None
@@ -20,40 +19,33 @@ game = None
 
 
 def main():
-    global messenger, state, TIME_PER_SLEEP
+    global messenger, state, TIME_PER_SLEEP, PLAYER
 
     init_logging()
     # args = parse_args()
 
     start_game()
-    port = ports[1]
+    port = ports['blue']
 
     messenger = Messenger(port, 'localhost')
-    state = State(messenger)
+    state = State(messenger, PLAYER)
     init_state()
-    timer = Timer(TIME_PER_SLEEP, state)
+    timer = Timer(TIME_PER_SLEEP)
 
-    # timer.add_task(timer.really_dumb_agent, state.mytanks['1'])
-    # timer.add_task(timer.really_dumb_agent, state.mytanks['2'])
-
-    # set up potential fields calculator
-    timer.set_pfc(setup_potential_fields())
-    timer.add_task(timer.potential_fields_move, '1')
+    # assign agents to tanks
+    ReallyDumbAgent('0', state)
+    PDFlagRetriever('1', 'red', state)
+    PDFlagRetriever('2', 'red', state)
+    PDFlagRetriever('3', 'red', state)
+    PDFlagRetriever('4', 'purple', state)
+    PDFlagRetriever('5', 'purple', state)
+    PDFlagRetriever('6', 'purple', state)
+    PDFlagRetriever('7', 'green', state)
+    PDFlagRetriever('8', 'green', state)
+    PDFlagRetriever('9', 'green', state)
 
     while 1:
         timer.tick()
-
-
-def setup_potential_fields():
-    global state
-    attractive = repulsive = tangential = []
-
-    # attractive. One flag that I chose at random.
-    flag = state.flags[3]
-    logging.info("Seeking flag %s", str(flag))
-    attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1))
-
-    return PotentialFieldCalculator(attractive, repulsive, tangential)
 
 
 def parse_args():
@@ -85,10 +77,11 @@ def start_game():
 def t_start_game():
     global ports
     proc = subprocess.Popen(["python", "bin/bzrflag"], stdout=subprocess.PIPE)
-    ports = []
+    ports = {}
     for i in range(0, 4):
-        line = proc.stdout.readline()
-        ports.append(int(line.split(" ")[-1]))
+        line = proc.stdout.readline().split(" ")
+        ports[line[2][:-1]] = int(line[-1])
+    print ports
 
 
 def init_state():
