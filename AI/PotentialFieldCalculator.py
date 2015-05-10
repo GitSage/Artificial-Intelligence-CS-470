@@ -1,6 +1,7 @@
 __author__ = 'byocum'
 import sys
 import math
+import logging
 
 
 class PotentialFieldCalculator:
@@ -19,11 +20,7 @@ class PotentialFieldCalculator:
         self.repulsive = repulsive
         self.tangential = tangential
 
-    def get_next_dir(self, x, y):
-        vec = self.calc(x, y)
-        self.pd_get_dir(vec)
-
-    def calc(self, x, y):
+    def potential_fields_calc(self, x, y):
         vec = self.DEFAULT_VEC
         self.add_vec(vec, self.attractive_vec(x, y))
         self.add_vec(vec, self.repulsive_vec(x, y))
@@ -33,13 +30,14 @@ class PotentialFieldCalculator:
     def attractive_vec(self, x, y):
         result_vec = self.DEFAULT_VEC  # vector that will contain the cumulative effect of all tangential fields
 
-        # calculate cumulative effect of all tangential fields
+        # calculate cumulative effect of all attractive fields
         for obj in self.attractive:
             self.add_vec(result_vec, obj.get_vec(x, y))
         return result_vec
 
     def repulsive_vec(self, x, y):
-        pass
+        # TODO
+        return self.DEFAULT_VEC
 
     def tangential_vec(self, x, y):
         result_vec = self.DEFAULT_VEC  # vector that will contain the cumulative effect of all tangential fields
@@ -54,9 +52,6 @@ class PotentialFieldCalculator:
         for i in range(0, len(vec1)):
             vec1[i] += vec2[i]
 
-    def pd_get_next_action(self, vec):
-        pass
-
 
 class PotentialFieldObject:
 
@@ -68,17 +63,26 @@ class PotentialFieldObject:
         self.a = alpha
 
     def dist(self, x, y):
-        return math.sqrt((x - self._x)**2 + (y - self._y)**2)
+        return math.sqrt((x - self.x)**2 + (y - self.y)**2)
 
     def ang(self, x, y):
-        return math.arctan2(self._y - y, self._x - x)
+        angle = math.atan2(self.y - y, self.x - x)
+        '''Make any angle be between +/- pi.'''
+        angle -= 2 * math.pi * int(angle / (2 * math.pi))
+        if angle <= -math.pi:
+            angle += 2 * math.pi
+        elif angle > math.pi:
+            angle -= 2 * math.pi
+        return angle
 
 
 class AttractiveObject(PotentialFieldObject):
 
     def get_vec(self, x, y):
-        ang = self.ang(x, self.x, y, self.y)
-        d = self.dist(x, self.x, y, self.y)
+        logging.info("AttractiveObject.get_vec(%f, %f)", x, y)
+        ang = self.ang(x, y)
+        d = self.dist(x, y)
+        logging.info("Found a distance of %f and an angle of %f", ang, d)
 
         # If the agent is already on the goal, no effect
         if d < self.r:
@@ -105,8 +109,8 @@ class RepulsiveObject(PotentialFieldObject):
 
         # If the agent is inside the repulsive object, push away infinitely hard
         if d < self.r:
-            xval = (-self.sign(math.cos(ang))*float('inf'))  # TODO: these look wrong
-            yval = (-self.sign(math.sin(ang))*float('inf'))  # TODO: these look wrong
+            xval = (-math.sign(math.cos(ang))*float('inf'))  # TODO: these look wrong
+            yval = (-math.sign(math.sin(ang))*float('inf'))  # TODO: these look wrong
             return [xval, yval]
 
         # If the agent is outside the repulsive object but inside the spread, calculate the effect
@@ -123,8 +127,8 @@ class RepulsiveObject(PotentialFieldObject):
 class TangentialObject(PotentialFieldObject):
 
     def get_vec(self, x, y):
-        ang = self.ang(x, self.x, y, self.y)
-        d = self.dist(x, self.x, y, self.y)
+        ang = self.ang(x, y)
+        d = self.dist(x, y)
 
         # TODO all of these
         # If the agent is already on the goal, push away infinitely hard

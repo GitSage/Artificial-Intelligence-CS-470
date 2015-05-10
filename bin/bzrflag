@@ -4,9 +4,8 @@ import os
 import sys
 
 path = os.path.split(os.path.abspath(__file__))[0]
-sys.path.append(os.path.join(path,'../'))
+sys.path.append(os.path.join(path, '../'))
 
 import bzrflag
-if __name__=='__main__':
+if __name__ == '__main__':
     bzrflag.run()
-

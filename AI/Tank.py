@@ -31,4 +31,4 @@ class Tank:
         self.messenger.angvel(self.index, angvel)
 
     def __repr__(self):
-        return "tank %d" % self.index
+        return "tank %d, x %f, y %f, angle %f, angvel %f" % (self.index, self.x, self.y, self.angle, self.angvel)

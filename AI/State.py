@@ -37,7 +37,7 @@ class State:
     def update_flags(self):
         # flag [team color] [possessing team color] [x] [y]
         self.flags = []
-        data = self.messenger.obstacles()
+        data = self.messenger.flags()
         for flag in data.split("\n"):
             f = flag.split(" ")
-            self.flags.append(Flag(f[1], f[2], f[3], f[4]))
+            self.flags.append(Flag(f[1], f[2], float(f[3]), float(f[4])))

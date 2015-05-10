@@ -1,15 +1,18 @@
 import time
-
+import logging
+from PDController import PDController
 __author__ = 'ben'
 
 
 class Timer:
 
-    def __init__(self, time_per_sleep):
+    def __init__(self, time_per_sleep, state):
         self.TIME_PER_SLEEP = time_per_sleep
         self.really_dumb_timers = {}
         self.pfc = None
+        self.pdcontroller = PDController(time_per_sleep)
         self.todo = []
+        self.state = state
 
     def tick(self):
         for task in self.todo:
@@ -20,10 +23,15 @@ class Timer:
     def add_task(self, task, args):
         self.todo.append(Task(task, args))
 
-    def potential_fields_move(self, tank):
-        # self.potential_fields_calculator =
-        next_action = self.pfc.get_next_action(tank.x, tank.y)
-        tank.dir = next_action['dir']
+    def potential_fields_move(self, tank_index):
+        tank = self.state.mytanks[tank_index]
+        tank.shoot()  # attempt to clear obstacles
+        pf_vec = self.pfc.potential_fields_calc(tank.x, tank.y)
+        next_action = self.pdcontroller.get_next_action(tank, pf_vec)
+        tank.speed(next_action['speed'])
+        tank.set_angvel(next_action['angvel'])
+        self.state.update_mytanks()
+        logging.info("New tank status: %s", tank)
 
     def set_pfc(self, pfc):
         self.pfc = pfc
