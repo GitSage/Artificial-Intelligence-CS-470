@@ -1,7 +1,6 @@
 __author__ = 'byocum'
 import sys
 import math
-import logging
 
 
 class PotentialFieldCalculator:

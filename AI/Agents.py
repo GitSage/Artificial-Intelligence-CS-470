@@ -1,3 +1,4 @@
+import logging
 from Timer import Timer
 from PotentialFieldCalculator import *
 from PDController import PDController
@@ -29,14 +30,14 @@ class ReallyDumbAgent(Agent):
 
         if self.count == 0:
             tank.speed(1)
-            # tank.shoot()
+            tank.shoot()
 
         if self.count == 3:
             tank.speed(0)
 
         if self.count == 5:
             tank.set_angvel(1)
-            # tank.shoot()
+            tank.shoot()
 
         if self.count == 7:
             tank.set_angvel(0)
@@ -54,21 +55,29 @@ class PDFlagRetriever(Agent):
         self.timer_id = Timer.add_task(self.potential_fields_move)
         self.pfc = self.setup_potential_fields()
         self.pdcontroller = PDController()
+        self.attacking = True
 
     def potential_fields_move(self):
 
-        # determine if I'm trying to attack the enemy or return home
-        enemy_flag = self.state.flags[self.flag_index]
-        if enemy_flag.possessing_team_color != self.state.me.color:  # attacking enemy
-            flag = self.state.flags[self.flag_index]
-        else:  # returning home
-            flag = self.state.me.flag
-        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=100, alpha=1)]
-        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
-
         # set up tank
         tank = self.state.mytanks[self.tank_index]
-        # tank.shoot()  # attempt to clear obstacles
+        tank.shoot()  # attempt to clear obstacles
+
+        # check if I just picked up the enemy flag
+        if tank.flag != '-' and self.attacking:
+            print "Returning to base"
+            self.attacking = False
+            base_coords = self.state.me.base.get_centerpoint()
+            attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=100, alpha=1)]
+            self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+
+        # check if I just returned the enemy flag
+        if tank.flag == '-' and not self.attacking:
+            print "Attacking enemy flag"
+            self.attacking = True
+            flag = self.state.flags[self.flag_index]
+            attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=100, alpha=1)]
+            self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
 
         # get the vector suggested by the potential field
         pf_vec = self.pfc.potential_fields_calc(tank.x, tank.y)
@@ -82,8 +91,6 @@ class PDFlagRetriever(Agent):
         self.state.update_mytanks()
         self.state.update_flags()
 
-        # logging.info("New tank status: %s", tank)
-
     def setup_potential_fields(self):
         flag = self.state.flags[self.flag_index]
 
@@ -92,7 +99,7 @@ class PDFlagRetriever(Agent):
         tangential = []
 
         # attractive. One flag that I chose at random.
-        logging.debug("Seeking flag %s", str(flag))
+        logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
         attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1))
 
         return PotentialFieldCalculator(attractive, repulsive, tangential)

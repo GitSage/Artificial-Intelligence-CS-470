@@ -1,4 +1,5 @@
-import logging, re
+import logging
+import re
 import socket
 
 
@@ -33,7 +34,7 @@ class Messenger:
         return msg
 
     def bases(self):
-        self.sock.send("bases")
+        return self.get_list_from_response(self.sock.send("bases"))
 
     def flags(self):
         return self.get_list_from_response(self.sock.send("flags"))

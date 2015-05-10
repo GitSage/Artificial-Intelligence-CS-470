@@ -4,6 +4,7 @@ import argparse
 import threading
 import subprocess
 import time
+import logging
 from AI.Messenger import Messenger
 from AI.State import State
 from AI.Agents import *
@@ -29,11 +30,10 @@ def main():
 
     messenger = Messenger(port, 'localhost')
     state = State(messenger, PLAYER)
-    init_state()
     timer = Timer(TIME_PER_SLEEP)
 
     # assign agents to tanks
-    ReallyDumbAgent('0', state)
+    # ReallyDumbAgent('0', state)
     PDFlagRetriever('1', 'red', state)
     PDFlagRetriever('2', 'red', state)
     PDFlagRetriever('3', 'red', state)
@@ -82,15 +82,6 @@ def t_start_game():
         line = proc.stdout.readline().split(" ")
         ports[line[2][:-1]] = int(line[-1])
     print ports
-
-
-def init_state():
-    global state
-    logging.debug("Initializing state.")
-    state.update_mytanks()
-    state.update_obstacles()
-    state.update_flags()
-    logging.debug("state: " + str(state))
 
 
 def init_logging():
