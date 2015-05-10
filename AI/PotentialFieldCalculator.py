@@ -21,14 +21,14 @@ class PotentialFieldCalculator:
         self.tangential = tangential
 
     def potential_fields_calc(self, x, y):
-        vec = self.DEFAULT_VEC
+        vec = self.get_default_vec()
         self.add_vec(vec, self.attractive_vec(x, y))
         self.add_vec(vec, self.repulsive_vec(x, y))
         self.add_vec(vec, self.tangential_vec(x, y))
         return vec
 
     def attractive_vec(self, x, y):
-        result_vec = self.DEFAULT_VEC  # vector that will contain the cumulative effect of all tangential fields
+        result_vec = self.get_default_vec()  # vector that will contain the cumulative effect of all tangential fields
 
         # calculate cumulative effect of all attractive fields
         for obj in self.attractive:
@@ -40,7 +40,7 @@ class PotentialFieldCalculator:
         return self.DEFAULT_VEC
 
     def tangential_vec(self, x, y):
-        result_vec = self.DEFAULT_VEC  # vector that will contain the cumulative effect of all tangential fields
+        result_vec = self.get_default_vec()  # vector that will contain the cumulative effect of all tangential fields
 
         # calculate cumulative effect of all tangential fields
         for obj in self.tangential:
@@ -51,6 +51,9 @@ class PotentialFieldCalculator:
     def add_vec(self, vec1, vec2):
         for i in range(0, len(vec1)):
             vec1[i] += vec2[i]
+
+    def get_default_vec(self):
+        return list(self.DEFAULT_VEC)
 
 
 class PotentialFieldObject:
@@ -79,10 +82,10 @@ class PotentialFieldObject:
 class AttractiveObject(PotentialFieldObject):
 
     def get_vec(self, x, y):
-        logging.info("AttractiveObject.get_vec(%f, %f)", x, y)
+        # logging.info("AttractiveObject.get_vec(%f, %f)", x, y)
         ang = self.ang(x, y)
         d = self.dist(x, y)
-        logging.info("Found a distance of %f and an angle of %f", ang, d)
+        # logging.info("Found a distance of %f and an angle of %f", d, ang)
 
         # If the agent is already on the goal, no effect
         if d < self.r:
