@@ -35,14 +35,14 @@ def main():
     # assign agents to tanks
     # ReallyDumbAgent('0', state)
     PDFlagRetriever('1', 'red', state)
-    PDFlagRetriever('2', 'red', state)
-    PDFlagRetriever('3', 'red', state)
-    PDFlagRetriever('4', 'purple', state)
-    PDFlagRetriever('5', 'purple', state)
-    PDFlagRetriever('6', 'purple', state)
-    PDFlagRetriever('7', 'green', state)
-    PDFlagRetriever('8', 'green', state)
-    PDFlagRetriever('9', 'green', state)
+    # PDFlagRetriever('2', 'red', state)
+    # PDFlagRetriever('3', 'red', state)
+    # PDFlagRetriever('4', 'purple', state)
+    # PDFlagRetriever('5', 'purple', state)
+    # PDFlagRetriever('6', 'purple', state)
+    # PDFlagRetriever('7', 'green', state)
+    # PDFlagRetriever('8', 'green', state)
+     #PDFlagRetriever('9', 'green', state)
 
     while 1:
         timer.tick()

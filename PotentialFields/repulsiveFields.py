@@ -37,20 +37,20 @@ class RepulsiveFields():
         vx = []
         vy = []
 
-        #Loop from 0 to x.length-1, therefore running x.length times:
+        # Loop from 0 to x.length-1, therefore running x.length times:
         # (ASSUMING THAT x AND y VECTORS HAVE THE SAME NUMBER OF ITEMS (THEY SHOULD))
         for i in range(0, x.size):
-            sum_vx = 0 #Add all of the repulsive fields and sum them up for each given position
-            sum_vy = 0 #Add all of the repulsive fields and sum them up for each given position
+            sum_vx = 0 # Add all of the repulsive fields and sum them up for each given position
+            sum_vy = 0 # Add all of the repulsive fields and sum them up for each given position
             
             for obstacle in self._obstacles:
-                #calculate distance to obstacle
+                # calculate distance to obstacle
                 d = obstacle.getDistanceTo(x[i], y[i])
                 r = obstacle._radius
                 s = obstacle._spread
                 theta = obstacle.getAngleToGoalFrom(x[i], y[i])
 
-                #FOLLOWING FORMULA FROM Potential Fields PDF ON LEARNING SUITE CONTENT TAB
+                # FOLLOWING FORMULA FROM Potential Fields PDF ON LEARNING SUITE CONTENT TAB
                 if d < r:
                     sum_vx += (-self.sign(math.cos(theta))*float('inf'))
                     sum_vy += (-self.sign(math.sin(theta))*float('inf'))

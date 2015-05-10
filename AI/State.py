@@ -1,6 +1,5 @@
 import logging
 import math
-__author__ = 'ben'
 
 
 class State:
@@ -37,7 +36,7 @@ class State:
             o = obstacle.split(" ")
             points = []
             for i in xrange(1, len(o), 2):
-                points.append([o[i], o[i+1]])
+                points.append([float(o[i]), float(o[i+1])])
             self.obstacles.append(Obstacle(points))
 
     def update_flags(self):
@@ -108,6 +107,18 @@ class Obstacle:
     def __init__(self, points):
         self.points = points
 
+    def get_radius(self):
+        x = math.fabs((self.points[0][0] - self.points[1][0]) / 2)
+        y = math.fabs((self.points[0][1] - self.points[1][1]) / 2)
+        return math.sqrt(x**2 + y**2)
+
+    def get_centerpoint(self):
+        """For now, assumes that the base is a rectangle.
+        """
+        x = (self.points[0][0] + self.points[1][0]) / 2
+        y = (self.points[0][1] + self.points[1][1]) / 2
+        return {'x': x, 'y': y}
+
 
 class Flag:
     def __init__(self, team_color, possessing_team_color, x, y):
@@ -117,9 +128,9 @@ class Flag:
         self.y = float(y)
 
     def __repr__(self):
-        return "Flag team color: %s, possessing_team_color: %s, x: %f, y:  %f" %(self.team_color,
-                                                                                 self.possessing_team_color, self.x,
-                                                                                 self.y)
+        return "Flag team color: %s, possessing_team_color: %s, x: %f, y:  %f" % (self.team_color,
+                                                                                  self.possessing_team_color, self.x,
+                                                                                  self.y)
 
 
 class Base:

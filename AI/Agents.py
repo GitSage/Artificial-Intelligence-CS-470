@@ -65,19 +65,11 @@ class PDFlagRetriever(Agent):
 
         # check if I just picked up the enemy flag
         if tank.flag != '-' and self.attacking:
-            print "Returning to base"
-            self.attacking = False
-            base_coords = self.state.me.base.get_centerpoint()
-            attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=100, alpha=1)]
-            self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+            self.return_to_base()
 
         # check if I just returned the enemy flag
         if tank.flag == '-' and not self.attacking:
-            print "Attacking enemy flag"
-            self.attacking = True
-            flag = self.state.flags[self.flag_index]
-            attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=100, alpha=1)]
-            self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+            self.attack_enemy_flag()
 
         # get the vector suggested by the potential field
         pf_vec = self.pfc.potential_fields_calc(tank.x, tank.y)
@@ -102,4 +94,26 @@ class PDFlagRetriever(Agent):
         logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
         attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1))
 
+        # repulsive. The corner of every obstacle gets a small, hard repulsive field, and the center gets a large, weak
+        # field.
+        obstacles = self.state.obstacles
+        for obstacle in obstacles:
+            for point in obstacle.points:
+                repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=3, spread=6, alpha=1000))
+            centerpoint = obstacle.get_centerpoint()
+            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius(),
+                                             spread=50, alpha=.1))
+
         return PotentialFieldCalculator(attractive, repulsive, tangential)
+
+    def return_to_base(self):
+        self.attacking = False
+        base_coords = self.state.me.base.get_centerpoint()
+        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=100, alpha=1)]
+        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+
+    def attack_enemy_flag(self):
+        self.attacking = True
+        flag = self.state.flags[self.flag_index]
+        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=100, alpha=1)]
+        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)

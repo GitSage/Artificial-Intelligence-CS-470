@@ -24,10 +24,11 @@ class PotentialFieldCalculator:
         self.add_vec(vec, self.attractive_vec(x, y))
         self.add_vec(vec, self.repulsive_vec(x, y))
         self.add_vec(vec, self.tangential_vec(x, y))
+        print "Total vector: ", vec
         return vec
 
     def attractive_vec(self, x, y):
-        result_vec = self.get_default_vec()  # vector that will contain the cumulative effect of all tangential fields
+        result_vec = self.get_default_vec()  # vector that will contain the cumulative effect of all attrative fields
 
         # calculate cumulative effect of all attractive fields
         for obj in self.attractive:
@@ -35,8 +36,21 @@ class PotentialFieldCalculator:
         return result_vec
 
     def repulsive_vec(self, x, y):
-        # TODO
-        return self.DEFAULT_VEC
+        result_vec = self.get_default_vec()  # vector that will contain the cumulative effect of all repulsive fields
+
+        # calculate cumulative effect of all repulsive fields
+        for obj in self.repulsive:
+            self.add_vec(result_vec, obj.get_vec(x, y))
+
+        # Check for NaN. This can happen when the tank is "inside" two obstacles at once, producing infinite repulsive
+        # forces. -infinity + infinity = NaN
+        if math.isnan(result_vec[0]):
+            result_vec[0] = 0
+        if math.isnan(result_vec[1]):
+            result_vec[1] = 0
+
+        print "Repulsive vector: ", result_vec
+        return result_vec
 
     def tangential_vec(self, x, y):
         result_vec = self.get_default_vec()  # vector that will contain the cumulative effect of all tangential fields
@@ -81,10 +95,8 @@ class PotentialFieldObject:
 class AttractiveObject(PotentialFieldObject):
 
     def get_vec(self, x, y):
-        # logging.info("AttractiveObject.get_vec(%f, %f)", x, y)
         ang = self.ang(x, y)
         d = self.dist(x, y)
-        # logging.info("Found a distance of %f and an angle of %f", d, ang)
 
         # If the agent is already on the goal, no effect
         if d < self.r:
@@ -106,13 +118,13 @@ class AttractiveObject(PotentialFieldObject):
 class RepulsiveObject(PotentialFieldObject):
 
     def get_vec(self, x, y):
-        ang = self.ang(x, self.x, y, self.y)
-        d = self.dist(x, self.x, y, self.y)
+        ang = self.ang(x, y)
+        d = self.dist(x, y)
 
         # If the agent is inside the repulsive object, push away infinitely hard
         if d < self.r:
-            xval = (-math.sign(math.cos(ang))*float('inf'))  # TODO: these look wrong
-            yval = (-math.sign(math.sin(ang))*float('inf'))  # TODO: these look wrong
+            xval = (-math.copysign(1, math.cos(ang))*float('inf'))  # TODO: these look wrong
+            yval = (-math.copysign(1, math.sin(ang))*float('inf'))  # TODO: these look wrong
             return [xval, yval]
 
         # If the agent is outside the repulsive object but inside the spread, calculate the effect
