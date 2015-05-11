@@ -24,7 +24,7 @@ class PotentialFieldCalculator:
         self.add_vec(vec, self.attractive_vec(x, y))
         self.add_vec(vec, self.repulsive_vec(x, y))
         self.add_vec(vec, self.tangential_vec(x, y))
-        print "Total vector: ", vec
+        # print "Total vector: ", vec
         return vec
 
     def attractive_vec(self, x, y):
@@ -49,7 +49,7 @@ class PotentialFieldCalculator:
         if math.isnan(result_vec[1]):
             result_vec[1] = 0
 
-        print "Repulsive vector: ", result_vec
+        # print "Repulsive vector: ", result_vec
         return result_vec
 
     def tangential_vec(self, x, y):
@@ -59,6 +59,14 @@ class PotentialFieldCalculator:
         for obj in self.tangential:
             self.add_vec(result_vec, obj.get_vec(x, y))
 
+        # Check for NaN. This can happen when the tank is "inside" two obstacles at once, producing infinite repulsive
+        # forces. -infinity + infinity = NaN
+        if math.isnan(result_vec[0]):
+            result_vec[0] = 0
+        if math.isnan(result_vec[1]):
+            result_vec[1] = 0
+
+        # print "Tangential vector: ", result_vec
         return result_vec
 
     def add_vec(self, vec1, vec2):
@@ -129,8 +137,8 @@ class RepulsiveObject(PotentialFieldObject):
 
         # If the agent is outside the repulsive object but inside the spread, calculate the effect
         elif self.r <= d <= self.s + self.r:
-            xval = self.a * (self.s + self.r - d) * math.cos(ang)
-            yval = self.a * (self.s + self.r - d) * math.sin(ang)
+            xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
+            yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
             return [xval, yval]
 
         # If the agent is outside the spread, no effect
@@ -151,10 +159,21 @@ class TangentialObject(PotentialFieldObject):
 
         # If the agent is outside the goal but inside the spread, calculate the effect
         elif self.r <= d <= self.s + self.r:
-            xval = self.a * (self.s + self.r - d) * math.cos(ang)
-            yval = self.a * (self.s + self.r - d) * math.sin(ang)
-            return [xval, yval]
+            xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
+            yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
+            return self.rotate_vec([xval, yval], False)
 
         # If the agent is outside the spread, no effect
         else:
             return [0, 0]
+
+    def rotate_vec(self, vec, clockwise):
+        tmp = vec[0]
+        if clockwise:
+            vec[0] = vec[1]
+            vec[1] = -tmp
+        else:
+            vec[0] = -vec[1]
+            vec[1] = tmp
+
+        return vec

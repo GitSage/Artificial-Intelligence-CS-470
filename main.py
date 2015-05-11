@@ -12,7 +12,7 @@ from AI.Agents import *
 
 PLAYER = 'blue'
 LOG_FILENAME = 'log.log'
-TIME_PER_SLEEP = .25
+TIME_PER_SLEEP = .1
 hello_var = 0
 state = None
 messenger = None
@@ -42,7 +42,7 @@ def main():
     # PDFlagRetriever('6', 'purple', state)
     # PDFlagRetriever('7', 'green', state)
     # PDFlagRetriever('8', 'green', state)
-     #PDFlagRetriever('9', 'green', state)
+    # PDFlagRetriever('9', 'green', state)
 
     while 1:
         timer.tick()

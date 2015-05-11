@@ -99,10 +99,19 @@ class PDFlagRetriever(Agent):
         obstacles = self.state.obstacles
         for obstacle in obstacles:
             for point in obstacle.points:
-                repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=3, spread=6, alpha=1000))
+                repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=3, spread=6, alpha=10))
             centerpoint = obstacle.get_centerpoint()
-            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius(),
-                                             spread=50, alpha=.1))
+            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius()+20,
+                                             spread=50, alpha=10))
+
+        # tangential. Same rules as repulsive.
+        obstacles = self.state.obstacles
+        for obstacle in obstacles:
+            for point in obstacle.points:
+                tangential.append(TangentialObject(x=point[0], y=point[1], radius=3, spread=6, alpha=10))
+            centerpoint = obstacle.get_centerpoint()
+            tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius()+20,
+                                               spread=50, alpha=10))
 
         return PotentialFieldCalculator(attractive, repulsive, tangential)
 
