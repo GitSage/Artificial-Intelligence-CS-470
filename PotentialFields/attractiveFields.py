@@ -14,15 +14,15 @@ class AttractiveFields():
         ax = fig.add_subplot(111)
 
         #generate grid
-        x = numpy.linspace(-2, 2, 2)
-        y = numpy.linspace(-1.5, 1.5, 2)
+        x = numpy.linspace(-2, 2, 24)
+        y = numpy.linspace(-1.5, 1.5, 24)
         x, y = numpy.meshgrid(x, y)
 
-        print x
-        print '----'
-        print y
-
         #--------------------------MY CODE----------------------------
+        #To fix a bug (See http://stackoverflow.com/questions/13730468/from-2d-to-1d-arrays)
+        x = numpy.reshape(x, (1,numpy.product(x.shape)))[0]
+        y = numpy.reshape(y, (1,numpy.product(y.shape)))[0]
+
         #initialize vectors (actually just lists)
         vx = []
         vy = []
@@ -59,8 +59,8 @@ class AttractiveFields():
         ax.set_xlabel('$x$') # $ cosmetically changes how the x looks
         ax.set_ylabel('$y$')
         ax.axis('image')
-        plt.show()
         plt.savefig(self._FILE_NAME)
+        plt.show()
 
     #--------------------------MY CODE----------------------------
     def __init__(self, goals):
