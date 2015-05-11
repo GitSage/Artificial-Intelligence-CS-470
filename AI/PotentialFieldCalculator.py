@@ -80,6 +80,16 @@ class PotentialFieldCalculator:
 class PotentialFieldObject:
 
     def __init__(self, x, y, radius, spread, alpha):
+        '''
+
+        :param x: centerpoint x-value
+        :param y: centerpoint y-value
+        :param radius:
+        :param spread:
+        :param alpha:strength (scaling variable)
+        :param direction: a variable from class AI.Utils.Direction
+        :return:
+        '''
         self.x = x  # the x-coordinate of the center of the goal object.
         self.y = y  # the y-coordinate of the center of the goal object.
         self.r = radius
@@ -131,6 +141,7 @@ class RepulsiveObject(PotentialFieldObject):
 
         # If the agent is inside the repulsive object, push away infinitely hard
         if d < self.r:
+            # copysign(1, a) == numpy.sign(a)
             xval = (-math.copysign(1, math.cos(ang))*float('inf'))  # TODO: these look wrong
             yval = (-math.copysign(1, math.sin(ang))*float('inf'))  # TODO: these look wrong
             return [xval, yval]
@@ -161,7 +172,7 @@ class TangentialObject(PotentialFieldObject):
         elif self.r <= d <= self.s + self.r:
             xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
             yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
-            return self.rotate_vec([xval, yval], False)
+            return self.rotate_vec([xval, yval], clockwise = False)
 
         # If the agent is outside the spread, no effect
         else:

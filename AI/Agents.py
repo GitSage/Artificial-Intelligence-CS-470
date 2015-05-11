@@ -92,7 +92,7 @@ class PDFlagRetriever(Agent):
 
         # attractive. One flag that I chose at random.
         logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
-        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1))
+        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1),)
 
         # repulsive. The corner of every obstacle gets a small, hard repulsive field, and the center gets a large, weak
         # field.

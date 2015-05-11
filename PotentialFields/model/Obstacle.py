@@ -16,8 +16,11 @@ class Obstacle():
     def getAngleToObstacleFrom(self, x, y):
         return math.atan2(self._y - y, self._x - x)
 
-    def __init__(self, x, y, radius, spread):
+    def __init__(self, x, y, radius, spread, rotateDegrees):
         self._x = x  # the x-coordinate of the center of the obstacle object.
         self._y = y  # the y-coordinate of the center of the obstacle object.
         self._radius = radius
         self._spread = spread
+
+        #How you want the tank to react to this obstacle
+        self._rotate = rotateDegrees
