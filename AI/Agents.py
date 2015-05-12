@@ -118,11 +118,11 @@ class PDFlagRetriever(Agent):
     def return_to_base(self):
         self.attacking = False
         base_coords = self.state.me.base.get_centerpoint()
-        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=100, alpha=1)]
+        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=1000000, alpha=1)]
         self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
 
     def attack_enemy_flag(self):
         self.attacking = True
         flag = self.state.flags[self.flag_index]
-        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=100, alpha=1)]
+        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1)]
         self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
