@@ -138,8 +138,7 @@ class Base:
     def __init__(self, team_color, points):
         self.team_color = team_color
         self.points = points
-        print points
-        print self.get_centerpoint()
+
 
     def get_centerpoint(self):
         """For now, assumes that the base is a rectangle.

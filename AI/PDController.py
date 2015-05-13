@@ -1,6 +1,7 @@
 import math
 import Timer
 
+
 class PDController:
 
     def __init__(self):
@@ -13,12 +14,14 @@ class PDController:
     def get_next_action(self, tank, vec):
         self.prev_vec = list(self.goal_vec)
         self.goal_vec = vec
-        return {'angvel': self.get_dir_to_goal(tank), 'speed': 1}
+        next_action = {'angvel': self.get_dir_to_goal(tank), 'speed': 1}
+        # print next_action
+        return next_action
 
     def get_dir_to_goal(self, tank):
         # The direction I should be facing minus the direction that I am facing
         error = self.dir_error(tank)
-        new_dir = 1 * error + 1 * (error - self.prev_dir_error) / Timer.Timer.TIME_PER_SLEEP
+        new_dir = 1 * error + (0 * (error - self.prev_dir_error) / Timer.Timer.TIME_PER_SLEEP)
         self.prev_dir_error = error
         return new_dir
 

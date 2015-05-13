@@ -1,4 +1,5 @@
 import logging
+import random
 from Timer import Timer
 from PotentialFieldCalculator import *
 from PDController import PDController
@@ -56,12 +57,20 @@ class PDFlagRetriever(Agent):
         self.pfc = self.setup_potential_fields()
         self.pdcontroller = PDController()
         self.attacking = True
+        self.prev_x = 0
+        self.prev_y = 0
+        self.time_spent_stuck = 0  # stuck for more than 10 seconds, get a new random vector
+        self.time_without_moving = 0  # consider ourselves stuck only after 5 seconds
+        self.stuck_vector = [0, 0]
+        self.stuck = False
 
     def potential_fields_move(self):
 
         # set up tank
         tank = self.state.mytanks[self.tank_index]
-        tank.shoot()  # attempt to clear obstacles
+
+        # check if I'm stuck and respond appropriately if so
+        self.check_stuck(tank)
 
         # check if I just picked up the enemy flag
         if tank.flag != '-' and self.attacking:
@@ -71,8 +80,11 @@ class PDFlagRetriever(Agent):
         if tank.flag == '-' and not self.attacking:
             self.attack_enemy_flag()
 
-        # get the vector suggested by the potential field
-        pf_vec = self.pfc.potential_fields_calc(tank.x, tank.y)
+        if not self.stuck:
+            # get the vector suggested by the potential field
+            pf_vec = self.pfc.potential_fields_calc(tank.x, tank.y)
+        else:
+            pf_vec = self.stuck_vector
 
         # give the vector to the pd controller for actionable speed and angvel
         next_action = self.pdcontroller.get_next_action(tank, pf_vec)
@@ -82,6 +94,37 @@ class PDFlagRetriever(Agent):
         tank.set_angvel(next_action['angvel'])
         self.state.update_mytanks()
         self.state.update_flags()
+        self.prev_x = tank.x
+        self.prev_y = tank.y
+
+    def check_stuck(self, tank):
+        # check if I've moved recently
+        if tank.x == self.prev_x and tank.y == self.prev_y:
+            self.time_without_moving += Timer.TIME_PER_SLEEP
+            tank.shoot()
+
+            # check if I'm stuck. Considered "stuck" if I haven't changed position in 5 seconds.
+            if self.time_without_moving > .5:
+
+                self.stuck = True
+                # print "STUCK!"
+
+                # if we just got stuck or we've been stuck for too long, get new random vector and shoot.
+                if self.time_spent_stuck == 0:
+                    self.stuck_vector = [random.random() * 200 - 100, random.random() * 200 - 100]
+                    # print "Generated random vector ", self.stuck_vector
+
+
+                # add to the stuck timer. If it's longer than 10 seconds, reset to 0.
+                self.time_spent_stuck += Timer.TIME_PER_SLEEP
+                if self.time_spent_stuck >= 2.5:
+                    self.time_spent_stuck = 0
+
+        elif self.stuck:
+            # print "RESETTING!"
+            self.time_without_moving = 0
+            self.stuck = False
+            self.stuck_vector = [0, 0]
 
     def setup_potential_fields(self):
         flag = self.state.flags[self.flag_index]
@@ -98,20 +141,20 @@ class PDFlagRetriever(Agent):
         # field.
         obstacles = self.state.obstacles
         for obstacle in obstacles:
-            for point in obstacle.points:
-                repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=3, spread=6, alpha=10))
+            # for point in obstacle.points:
+                # repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=1, spread=6, alpha=10))
             centerpoint = obstacle.get_centerpoint()
-            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius()+20,
-                                             spread=50, alpha=10))
+            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=1,
+                                             spread=obstacle.get_radius()+10, alpha=10))
 
         # tangential. Same rules as repulsive.
         obstacles = self.state.obstacles
         for obstacle in obstacles:
-            for point in obstacle.points:
-                tangential.append(TangentialObject(x=point[0], y=point[1], radius=3, spread=6, alpha=10))
+            # for point in obstacle.points:
+                # tangential.append(TangentialObject(x=point[0], y=point[1], radius=1, spread=6, alpha=10))
             centerpoint = obstacle.get_centerpoint()
-            tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius()+20,
-                                               spread=50, alpha=10))
+            tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=1,
+                                               spread=obstacle.get_radius()+10, alpha=30))
 
         return PotentialFieldCalculator(attractive, repulsive, tangential)
 

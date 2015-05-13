@@ -33,6 +33,7 @@ class PotentialFieldCalculator:
         # calculate cumulative effect of all attractive fields
         for obj in self.attractive:
             self.add_vec(result_vec, obj.get_vec(x, y))
+        # print "Attractive: ", result_vec
         return result_vec
 
     def repulsive_vec(self, x, y):
@@ -49,7 +50,7 @@ class PotentialFieldCalculator:
         if math.isnan(result_vec[1]):
             result_vec[1] = 0
 
-        # print "Repulsive vector: ", result_vec
+        # print "Repulsive: ", result_vec
         return result_vec
 
     def tangential_vec(self, x, y):
@@ -66,7 +67,7 @@ class PotentialFieldCalculator:
         if math.isnan(result_vec[1]):
             result_vec[1] = 0
 
-        # print "Tangential vector: ", result_vec
+        # print "Tangential: ", result_vec
         return result_vec
 
     def add_vec(self, vec1, vec2):
@@ -172,7 +173,7 @@ class TangentialObject(PotentialFieldObject):
         elif self.r <= d <= self.s + self.r:
             xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
             yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
-            return self.rotate_vec([xval, yval], clockwise = False)
+            return self.rotate_vec([xval, yval], clockwise=True)
 
         # If the agent is outside the spread, no effect
         else:

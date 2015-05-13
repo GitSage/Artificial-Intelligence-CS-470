@@ -10,7 +10,7 @@ from AI.State import State
 from AI.Agents import *
 
 
-PLAYER = 'blue'
+PLAYER = 'red'
 LOG_FILENAME = 'log.log'
 TIME_PER_SLEEP = .1
 hello_var = 0
@@ -26,7 +26,7 @@ def main():
     # args = parse_args()
 
     start_game()
-    port = ports['blue']
+    port = ports[PLAYER]
 
     messenger = Messenger(port, 'localhost')
     state = State(messenger, PLAYER)
@@ -34,9 +34,9 @@ def main():
 
     # assign agents to tanks
     # ReallyDumbAgent('0', state)
-    PDFlagRetriever('1', 'red', state)
-    # PDFlagRetriever('2', 'red', state)
-    # PDFlagRetriever('3', 'red', state)
+    PDFlagRetriever('1', 'green', state)
+    PDFlagRetriever('2', 'blue', state)
+    PDFlagRetriever('3', 'purple', state)
     # PDFlagRetriever('4', 'purple', state)
     # PDFlagRetriever('5', 'purple', state)
     # PDFlagRetriever('6', 'purple', state)
