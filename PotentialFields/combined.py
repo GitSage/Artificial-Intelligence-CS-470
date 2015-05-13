@@ -179,27 +179,27 @@ def FourLs():
     tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-150, y=120, radius=30, spread=150, beta=1))
 
     #Top Right L
-    obstacles.append(Obstacle.Obstacle(x=150, y=120, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=150, y=180, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=210, y=120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=150, y=120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=150, y=180, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=210, y=120, radius=30, spread=100, beta=1))
 
     #Bottom Right L
-    obstacles.append(Obstacle.Obstacle(x=150, y=-120, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=210, y=-120, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=150, y=-180, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=150, y=-120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=210, y=-120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=150, y=-180, radius=30, spread=100, beta=1))
 
     #Bottom Left L
-    obstacles.append(Obstacle.Obstacle(x=-90, y=-120, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=-90, y=-180, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=-150, y=-120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-90, y=-120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-90, y=-180, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-150, y=-120, radius=30, spread=100, beta=1))
 
     #Top Left L
-    obstacles.append(Obstacle.Obstacle(x=-90, y=120, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=-90, y=180, radius=30, spread=100, beta=1))
-    obstacles.append(Obstacle.Obstacle(x=-150, y=120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-90, y=120, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-90, y=180, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-150, y=120, radius=30, spread=100, beta=1))
 
     #Middle Rectangular Obstacle
-    obstacles.append(Obstacle.Obstacle(x=0, y=10, radius=30, spread=100, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=0, y=10, radius=60, spread=100, beta=10))
 
 
     Combined(goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise, mapMinX=-400, mapMaxX=400, mapMinY=-400, mapMaxY=400, stepX=40, stepY=40, fileName='FourLs2.png')
