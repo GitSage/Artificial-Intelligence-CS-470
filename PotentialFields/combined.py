@@ -27,8 +27,8 @@ class Combined():
         ax = fig.add_subplot(111)
 
         #generate grid
-        x = numpy.linspace(-2, 2, 24)
-        y = numpy.linspace(-1.5, 1.5, 24)
+        x = numpy.linspace(self._mapMinX, self._mapMaxX, self._stepX)
+        y = numpy.linspace(self._mapMinY, self._mapMaxY, self._stepY)
         x, y = numpy.meshgrid(x, y)
 
 
@@ -136,13 +136,20 @@ class Combined():
         plt.show()
 
     #--------------------------MY CODE----------------------------
-    def __init__(self, goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise):
+    def __init__(self, goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise, mapMinX=-2, mapMaxX=2, mapMinY=-1.5, mapMaxY=1.5, stepX=24, stepY=24, fileName="combined.png"):
         #Initialize variables first!
-        self._FILE_NAME = 'combined.png' #File name to save the figure as.
+        self._FILE_NAME = fileName #File name to save the figure as.
         self._goals = goals #List of "Goal" objects to make an attractive field of.
         self._obstacles = obstacles #List of "Obstacle" objects to make a repulsive field of.
         self._tangentialsClockwise = tangentialsClockwise #List of "TangentialClockwise" objects to make a tangential field of.
         self._tangentialsCounterclockwise = tangentialsCounterclockwise #List of "TangentialCounterclockwise" objects to make a tangential field of.
+
+        self._mapMinX = mapMinX
+        self._mapMaxX = mapMaxX
+        self._mapMinY = mapMinY
+        self._mapMaxY = mapMaxY
+        self._stepX = stepX
+        self._stepY = stepY
 
         self._alpha = 1 #For scaling the vx and vy values for attractive fields.
         self._beta = 1 #For scaling the vx and vy values for repulsive fields.
@@ -153,8 +160,49 @@ class Combined():
     #------------------------------------------------------------
 
 
-if __name__ == "__main__":
-    #TEST CASE runs when this file is run individually.
+def FourLs():
+    goals = []
+    obstacles = []
+    tangentialsClockwise = []
+    tangentialsCounterclockwise = []
+
+    #Blue base
+    goals.append(Goal.Goal(x=0, y=370, radius=30, spread=100, alpha=1))
+    #goals.append(Goal.Goal(x=-370, y=0, radius=30, spread=100, alpha=1))
+
+
+    #Top Left L
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-90, y=120, radius=30, spread=150, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-90, y=180, radius=30, spread=150, beta=1))
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(x=-150, y=120, radius=30, spread=150, beta=1))
+
+    #Top Right L
+    obstacles.append(Obstacle.Obstacle(x=150, y=120, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=150, y=180, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=210, y=120, radius=30, spread=100, beta=1))
+
+    #Bottom Right L
+    obstacles.append(Obstacle.Obstacle(x=150, y=-120, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=210, y=-120, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=150, y=-180, radius=30, spread=100, beta=1))
+
+    #Bottom Left L
+    obstacles.append(Obstacle.Obstacle(x=-90, y=-120, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=-90, y=-180, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=-150, y=-120, radius=30, spread=100, beta=1))
+
+    #Top Left L
+    obstacles.append(Obstacle.Obstacle(x=-90, y=120, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=-90, y=180, radius=30, spread=100, beta=1))
+    obstacles.append(Obstacle.Obstacle(x=-150, y=120, radius=30, spread=100, beta=1))
+
+    #Middle Rectangular Obstacle
+    obstacles.append(Obstacle.Obstacle(x=0, y=10, radius=30, spread=100, beta=1))
+
+
+    Combined(goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise, mapMinX=-400, mapMaxX=400, mapMinY=-400, mapMaxY=400, stepX=40, stepY=40, fileName='FourLs.png')
+
+def Test():
     goals = []
     goals.append(Goal.Goal(0, 0, 1, 2))
 
@@ -169,3 +217,8 @@ if __name__ == "__main__":
 
 
     Combined(goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise)
+
+if __name__ == "__main__":
+    #TEST CASE runs when this file is run individually.
+    Test()
+    #FourLs()

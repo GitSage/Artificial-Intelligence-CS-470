@@ -9,43 +9,39 @@ attractive = []
 repulsive = []
 tangential = []
 
-#Reference for syntax
-#attractive.append(AttractiveObject(x=150.0, y=120.0, radius=30, spread=1000000, alpha=1))
-
-#From the email list: (Treat the following string as a block comment)
-# Email list is missing the x=0, y=0 middle box thing.
-comment='''
-{'y': 120.0, 'x': 150.0}
-{'y': 180.0, 'x': 150.0}
-{'y': 120.0, 'x': 210.0}
-{'y': -120.0, 'x': 150.0}
-{'y': -120.0, 'x': 210.0}
-{'y': -180.0, 'x': 150.0}
-{'y': -120.0, 'x': -90.0}
-{'y': -180.0, 'x': -90.0}
-{'y': -120.0, 'x': -150.0}
-{'y': 120.0, 'x': -90.0}
-{'y': 180.0, 'x': -90.0}
-{'y': 120.0, 'x': -150.0}
-{'y': 0.0, 'x': 10.0}
 
 
-all 30 except the middle radius is 60.
-'''
-# I am just guessing on spread=100. Might need to adjust later.
-repulsive.append(RepulsiveObject(x=150.0, y=120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=150.0, y=180.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=210.0, y=120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=150.0, y=-120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=210.0, y=-120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=150.0, y=-180.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=-90.0, y=-120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=-90.0, y=-180.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=-150.0, y=-120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=-90.0, y=120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=-90.0, y=180.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=-150.0, y=120.0, radius=30, spread=100, alpha=1))
-repulsive.append(RepulsiveObject(x=10.0, y=0.0, radius=30, spread=100, alpha=1))
+ #Blue base (the top one)
+attractive.append(AttractiveObject(x=0, y=370, radius=30, spread=100, alpha=1))
 
-# Email list is missing the x=0, y=0 middle box thing. So I added it here:
-repulsive.append(RepulsiveObject(x=0.0, y=0.0, radius=60, spread=100, alpha=1))
+#Red base (the left one)
+#attractive.append(AttractiveObject(x=-370, y=0, radius=30, spread=100, alpha=1))
+
+
+#Top Left L
+tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=150, beta=1))
+tangential.append(TangentialObject(x=-90, y=180, radius=30, spread=150, beta=1))
+tangential.append(TangentialObject(x=-150, y=120, radius=30, spread=150, beta=1))
+
+#Top Right L
+repulsive.append(RepulsiveObject(x=150, y=120, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=150, y=180, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=210, y=120, radius=30, spread=100, beta=1))
+
+#Bottom Right L
+repulsive.append(RepulsiveObject(x=150, y=-120, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=210, y=-120, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=150, y=-180, radius=30, spread=100, beta=1))
+
+#Bottom Left L
+repulsive.append(RepulsiveObject(x=-90, y=-120, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=-90, y=-180, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=-150, y=-120, radius=30, spread=100, beta=1))
+
+#Top Left L
+repulsive.append(RepulsiveObject(x=-90, y=120, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=-90, y=180, radius=30, spread=100, beta=1))
+repulsive.append(RepulsiveObject(x=-150, y=120, radius=30, spread=100, beta=1))
+
+#Middle Rectangular Obstacle
+repulsive.append(RepulsiveObject(x=0, y=10, radius=30, spread=100, beta=1))
