@@ -167,8 +167,10 @@ def FourLs():
     tangentialsCounterclockwise = []
 
     #Blue base
-    goals.append(Goal.Goal(x=0, y=370, radius=30, spread=100, alpha=1))
-    #goals.append(Goal.Goal(x=-370, y=0, radius=30, spread=100, alpha=1))
+    #goals.append(Goal.Goal(x=0, y=370, radius=30, spread=100, alpha=1))
+
+    #Red base
+    goals.append(Goal.Goal(x=-370, y=0, radius=30, spread=100, alpha=1))
 
 
     #Top Left L
@@ -200,7 +202,7 @@ def FourLs():
     obstacles.append(Obstacle.Obstacle(x=0, y=10, radius=30, spread=100, beta=1))
 
 
-    Combined(goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise, mapMinX=-400, mapMaxX=400, mapMinY=-400, mapMaxY=400, stepX=40, stepY=40, fileName='FourLs.png')
+    Combined(goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise, mapMinX=-400, mapMaxX=400, mapMinY=-400, mapMaxY=400, stepX=40, stepY=40, fileName='FourLs2.png')
 
 def Test():
     goals = []
@@ -220,5 +222,5 @@ def Test():
 
 if __name__ == "__main__":
     #TEST CASE runs when this file is run individually.
-    Test()
-    #FourLs()
+    #Test()
+    FourLs()
