@@ -11,7 +11,7 @@ tangential = []
 
 
 
- #Blue base (the top one)
+#Blue base (the top one)
 attractive.append(AttractiveObject(x=0, y=370, radius=30, spread=100, alpha=1))
 
 #Red base (the left one)

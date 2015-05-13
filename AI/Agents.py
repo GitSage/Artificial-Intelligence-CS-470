@@ -4,6 +4,7 @@ from Timer import Timer
 from PotentialFieldCalculator import *
 from PDController import PDController
 
+
 class Agent:
 
     def __init__(self, tank_index, state):
@@ -127,7 +128,83 @@ class PDFlagRetriever(Agent):
             self.stuck_vector = [0, 0]
 
     def setup_potential_fields(self):
+
         flag = self.state.flags[self.flag_index]
+
+        attractive = []
+        repulsive = []
+        tangential = []
+
+        # attractive. One flag that I chose at random.
+        logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
+
+        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1),)
+
+        # Top Left L
+        tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=150, alpha=1))
+        tangential.append(TangentialObject(x=-90, y=180, radius=30, spread=150, alpha=1))
+        tangential.append(TangentialObject(x=-150, y=120, radius=30, spread=150, alpha=1))
+
+        # Top Right L
+        repulsive.append(RepulsiveObject(x=150, y=120, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=150, y=180, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=210, y=120, radius=30, spread=100, alpha=1))
+
+        # Bottom Right L
+        repulsive.append(RepulsiveObject(x=150, y=-120, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=210, y=-120, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=150, y=-180, radius=30, spread=100, alpha=1))
+
+        # Bottom Left L
+        repulsive.append(RepulsiveObject(x=-90, y=-120, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=-90, y=-180, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=-150, y=-120, radius=30, spread=100, alpha=1))
+
+        # Top Left L
+        repulsive.append(RepulsiveObject(x=-90, y=120, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=-90, y=180, radius=30, spread=100, alpha=1))
+        repulsive.append(RepulsiveObject(x=-150, y=120, radius=30, spread=100, alpha=1))
+
+        # Middle Rectangular Obstacle
+        repulsive.append(RepulsiveObject(x=0, y=10, radius=30, spread=100, alpha=1))
+
+        return PotentialFieldCalculator(attractive, repulsive, tangential)
+
+    def return_to_base(self):
+        self.attacking = False
+        base_coords = self.state.me.base.get_centerpoint()
+        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=1000000, alpha=1)]
+        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+
+    def attack_enemy_flag(self):
+        self.attacking = True
+        flag = self.state.flags[self.flag_index]
+        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1)]
+        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        '''flag = self.state.flags[self.flag_index]
 
         attractive = []
         repulsive = []
@@ -156,16 +233,5 @@ class PDFlagRetriever(Agent):
             tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=1,
                                                spread=obstacle.get_radius()+10, alpha=30))
 
-        return PotentialFieldCalculator(attractive, repulsive, tangential)
+        return PotentialFieldCalculator(attractive, repulsive, tangential)'''
 
-    def return_to_base(self):
-        self.attacking = False
-        base_coords = self.state.me.base.get_centerpoint()
-        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=1000000, alpha=1)]
-        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
-
-    def attack_enemy_flag(self):
-        self.attacking = True
-        flag = self.state.flags[self.flag_index]
-        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1)]
-        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)

@@ -4,7 +4,6 @@ import argparse
 import threading
 import subprocess
 import time
-import logging
 from AI.Messenger import Messenger
 from AI.State import State
 from AI.Agents import *
