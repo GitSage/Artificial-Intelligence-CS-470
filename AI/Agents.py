@@ -92,7 +92,7 @@ class PDFlagRetriever(Agent):
 
         # attractive. One flag that I chose at random.
         logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
-        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1))
+        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=100))
 
         # repulsive. The corner of every obstacle gets a small, hard repulsive field, and the center gets a large, weak
         # field.
@@ -101,7 +101,7 @@ class PDFlagRetriever(Agent):
             for point in obstacle.points:
                 repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=3, spread=6, alpha=10))
             centerpoint = obstacle.get_centerpoint()
-            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius()+20,
+            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius(),
                                              spread=50, alpha=10))
 
         # tangential. Same rules as repulsive.
@@ -110,7 +110,7 @@ class PDFlagRetriever(Agent):
             for point in obstacle.points:
                 tangential.append(TangentialObject(x=point[0], y=point[1], radius=3, spread=6, alpha=10))
             centerpoint = obstacle.get_centerpoint()
-            tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius()+20,
+            tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=obstacle.get_radius(),
                                                spread=50, alpha=10))
 
         return PotentialFieldCalculator(attractive, repulsive, tangential)
