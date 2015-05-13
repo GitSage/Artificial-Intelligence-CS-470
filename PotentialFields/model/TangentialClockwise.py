@@ -2,7 +2,7 @@ __author__ = 'lexic92'
 
 import math
 
-class Obstacle():
+class TangentialClockwise():
 
     def getDistanceTo(self, x, y):
         '''

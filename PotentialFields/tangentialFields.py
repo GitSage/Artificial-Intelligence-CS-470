@@ -3,9 +3,9 @@ __author__ = 'lexic92'
 import matplotlib.pyplot as plt
 import numpy
 import math
-from PotentialFields.model import Obstacle, Goal
+from PotentialFields.model import TangentialClockwise, TangentialCounterclockwise
 
-class AttractiveAndRepulsiveFields():
+class TangentialFields():
     def sign(self, argument):
         '''
         Returns the sign of the argument. Intended for use in multiplication (because you can
@@ -21,7 +21,7 @@ class AttractiveAndRepulsiveFields():
         else:
             raise AssertionError()
 
-    def _generateAttractiveAndRepulsiveFieldGraph(self):
+    def _generateRepulsiveFieldGraph(self):
         # CODE FROM WALTER'S EXAMPLE IN SIMPLE.PY (UNMODIFIED, except for some parameters Ben might have modified)
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -30,7 +30,6 @@ class AttractiveAndRepulsiveFields():
         x = numpy.linspace(-2, 2, 24)
         y = numpy.linspace(-1.5, 1.5, 24)
         x, y = numpy.meshgrid(x, y)
-
 
         #--------------------------MY CODE----------------------------
         #To fix a bug (See http://stackoverflow.com/questions/13730468/from-2d-to-1d-arrays)
@@ -41,46 +40,46 @@ class AttractiveAndRepulsiveFields():
         vx = []
         vy = []
 
-        #Loop from 0 to x.length-1, therefore running x.length times:
+        # Loop from 0 to x.length-1, therefore running x.length times:
         # (ASSUMING THAT x AND y VECTORS HAVE THE SAME NUMBER OF ITEMS (THEY SHOULD))
         for i in range(0, x.size):
-            sum_vx = 0 #Add all of the attractive AND repulsive fields and sum them up for each given position
-            sum_vy = 0 #Add all of the attractive AND repulsive fields and sum them up for each given position
+            sum_vx = 0 # Add all of the repulsive fields and sum them up for each given position
+            sum_vy = 0 # Add all of the repulsive fields and sum them up for each given position
 
-            #--------------- ONLY CHANGE FROM REPULSIVEFIELDS.PY: ADD THIS TO THE SUMMATION ---------
-            for goal in self._goals:
-                #calculate distance to goal
-                d = goal.getDistanceTo(x[i], y[i])
-                r = goal._radius
-                s = goal._spread
-                theta = goal.getAngleToGoalFrom(x[i], y[i])
+            #theta - 90
+            for tangential in self._tangentialsClockwise:
+                # calculate distance to obstacle
+                d = tangential.getDistanceTo(x[i], y[i])
+                r = tangential._radius
+                s = tangential._spread
+                theta = tangential.getAngleToObstacleFrom(x[i], y[i]) - 90.0
 
-                #FOLLOWING FORMULA FROM Potential Fields PDF ON LEARNING SUITE CONTENT TAB
-                if d < r:
-                    sum_vx += 0
-                    sum_vy += 0
-                elif d <= (r + s):
-                    sum_vx += (self._alpha*(d - r)*math.cos(theta))
-                    sum_vy += (self._alpha*(d - r)*math.sin(theta))
-                elif d > (r + s):
-                    sum_vx += (self._alpha*s*math.cos(theta))
-                    sum_vy += (self._alpha*s*math.sin(theta))
-            #---------------------------------------------------------------------------------------
-
-            for obstacle in self._obstacles:
-                #calculate distance to obstacle
-                d = obstacle.getDistanceTo(x[i], y[i])
-                r = obstacle._radius
-                s = obstacle._spread
-                theta = obstacle.getAngleToObstacleFrom(x[i], y[i])
-
-                #FOLLOWING FORMULA FROM Potential Fields PDF ON LEARNING SUITE CONTENT TAB
+                # FOLLOWING FORMULA FROM Potential Fields PDF ON LEARNING SUITE CONTENT TAB
                 if d < r:
                     sum_vx += (-self.sign(math.cos(theta))*float('inf'))
                     sum_vy += (-self.sign(math.sin(theta))*float('inf'))
                 elif d <= (r + s):
-                    sum_vx += (-self._beta)*(s + r - d)*math.cos(theta)
-                    sum_vy += (-self._beta)*(s + r - d)*math.sin(theta)
+                    sum_vx += (-tangential._beta)*(s + r - d)*math.cos(theta)
+                    sum_vy += (-tangential._beta)*(s + r - d)*math.sin(theta)
+                elif d > (r + s):
+                    sum_vx += 0
+                    sum_vy += 0
+
+            #theta + 90
+            for tangential in self._tangentialsCounterclockwise:
+                # calculate distance to obstacle
+                d = tangential.getDistanceTo(x[i], y[i])
+                r = tangential._radius
+                s = tangential._spread
+                theta = tangential.getAngleToObstacleFrom(x[i], y[i]) + 90.0
+
+                # FOLLOWING FORMULA FROM Potential Fields PDF ON LEARNING SUITE CONTENT TAB
+                if d < r:
+                    sum_vx += (-self.sign(math.cos(theta))*float('inf'))
+                    sum_vy += (-self.sign(math.sin(theta))*float('inf'))
+                elif d <= (r + s):
+                    sum_vx += (-tangential._beta)*(s + r - d)*math.cos(theta)
+                    sum_vy += (-tangential._beta)*(s + r - d)*math.sin(theta)
                 elif d > (r + s):
                     sum_vx += 0
                     sum_vy += 0
@@ -98,23 +97,24 @@ class AttractiveAndRepulsiveFields():
         plt.show()
 
     #--------------------------MY CODE----------------------------
-    def __init__(self, goals, obstacles):
+    def __init__(self, tangentialsClockwise, tangentialsCounterclockwise):
         #Initialize variables first!
-        self._FILE_NAME = 'attractive_and_repulsive_fields.png' #File name to save the figure as.
-        self._goals = goals #List of "Goal" objects to make an attractive field of.
-        self._obstacles = obstacles #List of "Obstacle" objects to make a repulsive field of.
-        self._alpha = 1 #For scaling the vx and vy values for attractive fields.
-        self._beta = 1 #For scaling the vx and vy values for repulsive fields.
+        self._FILE_NAME = 'tangential_fields.png' #File name to save the figure as.
+        self._tangentialsClockwise = tangentialsClockwise #List of "TangentialClockwise" objects to make a tangential field of.
+        self._tangentialsCounterclockwise = tangentialsCounterclockwise #List of "TangentialCounterclockwise" objects to make a tangential field of.
 
         #do stuff
-        self._generateAttractiveAndRepulsiveFieldGraph()
+        self._generateRepulsiveFieldGraph()
     #------------------------------------------------------------
+
 
 
 if __name__ == "__main__":
     #TEST CASE runs when this file is run individually.
-    goals = []
-    goals.append(Goal.Goal(0, 0, 1, 2))
-    obstacles = []
-    obstacles.append(Obstacle.Obstacle(2, 1.5, 1, 2))
-    AttractiveAndRepulsiveFields(goals, obstacles)
+    tangentialsClockwise = []
+    tangentialsClockwise.append(TangentialClockwise.TangentialClockwise(-1, 1, .2, 2, 1))
+
+    tangentialsCounterclockwise = []
+    tangentialsCounterclockwise.append(TangentialCounterclockwise.TangentialCounterclockwise(1, -1, .2, 2, 1))
+
+    TangentialFields(tangentialsClockwise, tangentialsCounterclockwise)

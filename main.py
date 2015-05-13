@@ -4,13 +4,12 @@ import argparse
 import threading
 import subprocess
 import time
-import logging
 from AI.Messenger import Messenger
 from AI.State import State
 from AI.Agents import *
 
 
-PLAYER = 'blue'
+PLAYER = 'red'
 LOG_FILENAME = 'log.log'
 TIME_PER_SLEEP = .1
 hello_var = 0
@@ -24,22 +23,12 @@ def main():
 
     init_logging()
     args = parse_args()
-    start_game()
 
     if args.port:
         port = args.port
     else:
-        port = ports['blue']
-
-    if args.attack_color:
-        attack_color = args.attack_color
-    else:
-        attack_color = 'red'
-
-    if args.agent == 'PDFlagRetriever':
-        PDFlagRetriever('1', attack_color, state)
-    else:
-        ReallyDumbAgent('0', state)
+        start_game()
+        port = ports[PLAYER]
 
     messenger = Messenger(port, 'localhost')
     state = State(messenger, PLAYER)
@@ -47,15 +36,25 @@ def main():
 
     # assign agents to tanks
     # ReallyDumbAgent('0', state)
-    PDFlagRetriever('1', attack_color, state)
-    # PDFlagRetriever('2', 'red', state)
-    # PDFlagRetriever('3', 'red', state)
-    # PDFlagRetriever('4', 'purple', state)
-    # PDFlagRetriever('5', 'purple', state)
-    # PDFlagRetriever('6', 'purple', state)
-    # PDFlagRetriever('7', 'green', state)
-    # PDFlagRetriever('8', 'green', state)
-    # PDFlagRetriever('9', 'green', state)
+    # ReallyDumbAgent('1', state)
+    # ReallyDumbAgent('2', state)
+    # ReallyDumbAgent('3', state)
+    # ReallyDumbAgent('4', state)
+    # ReallyDumbAgent('5', state)
+    # ReallyDumbAgent('6', state)
+    # ReallyDumbAgent('7', state)
+    # ReallyDumbAgent('8', state)
+
+    PDFlagRetriever('0', 'blue', state)
+    PDFlagRetriever('1', 'blue', state)
+    PDFlagRetriever('2', 'blue', state)
+    PDFlagRetriever('3', 'blue', state)
+    PDFlagRetriever('4', 'blue', state)
+    PDFlagRetriever('5', 'blue', state)
+    PDFlagRetriever('6', 'blue', state)
+    PDFlagRetriever('7', 'blue', state)
+    PDFlagRetriever('8', 'blue', state)
+    PDFlagRetriever('9', 'blue', state)
 
     while 1:
         timer.tick()
@@ -70,18 +69,9 @@ def parse_args():
                         type=int,
                         help='port',
                         required=False)
+
+
     args = parser.parse_args()
-
-    parser.add_argument('-a',
-                        '--attack-color',
-                        type=str,
-                        help='Color of opponent you wish to target',
-                        required = False)
-
-    parser.add_argument('-agent',
-                        type=str,
-                        help='Type of AI to be used. Options: PDFlagRetriever, ReallyDumbAgent',
-                        default='PDFlagRetriever')
     logging.debug("Arguments: %s", args)
     return args
 

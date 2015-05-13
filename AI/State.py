@@ -139,9 +139,10 @@ class Base:
         self.team_color = team_color
         self.points = points
 
+
     def get_centerpoint(self):
         """For now, assumes that the base is a rectangle.
         """
-        x = (self.points[0][0] + self.points[1][0]) / 2
-        y = (self.points[0][1] + self.points[1][1]) / 2
+        x = (self.points[0][0] + self.points[1][0] + self.points[2][0] + self.points[3][0]) / 4
+        y = (self.points[0][1] + self.points[1][1] + self.points[2][1] + self.points[3][1]) / 4
         return {'x': x, 'y': y}

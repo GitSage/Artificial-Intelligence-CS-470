@@ -33,6 +33,7 @@ class PotentialFieldCalculator:
         # calculate cumulative effect of all attractive fields
         for obj in self.attractive:
             self.add_vec(result_vec, obj.get_vec(x, y))
+        # print "Attractive: ", result_vec
         return result_vec
 
     def repulsive_vec(self, x, y):
@@ -49,7 +50,7 @@ class PotentialFieldCalculator:
         if math.isnan(result_vec[1]):
             result_vec[1] = 0
 
-        # print "Repulsive vector: ", result_vec
+        # print "Repulsive: ", result_vec
         return result_vec
 
     def tangential_vec(self, x, y):
@@ -66,7 +67,7 @@ class PotentialFieldCalculator:
         if math.isnan(result_vec[1]):
             result_vec[1] = 0
 
-        # print "Tangential vector: ", result_vec
+        # print "Tangential: ", result_vec
         return result_vec
 
     def add_vec(self, vec1, vec2):
@@ -80,6 +81,16 @@ class PotentialFieldCalculator:
 class PotentialFieldObject:
 
     def __init__(self, x, y, radius, spread, alpha):
+        '''
+
+        :param x: centerpoint x-value
+        :param y: centerpoint y-value
+        :param radius:
+        :param spread:
+        :param alpha:strength (scaling variable)
+        :param direction: a variable from class AI.Utils.Direction
+        :return:
+        '''
         self.x = x  # the x-coordinate of the center of the goal object.
         self.y = y  # the y-coordinate of the center of the goal object.
         self.r = radius
@@ -131,6 +142,7 @@ class RepulsiveObject(PotentialFieldObject):
 
         # If the agent is inside the repulsive object, push away infinitely hard
         if d < self.r:
+            # copysign(1, a) == numpy.sign(a)
             xval = (-math.copysign(1, math.cos(ang))*float('inf'))  # TODO: these look wrong
             yval = (-math.copysign(1, math.sin(ang))*float('inf'))  # TODO: these look wrong
             return [xval, yval]
@@ -161,7 +173,7 @@ class TangentialObject(PotentialFieldObject):
         elif self.r <= d <= self.s + self.r:
             xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
             yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
-            return self.rotate_vec([xval, yval], False)
+            return self.rotate_vec([xval, yval], clockwise=True)
 
         # If the agent is outside the spread, no effect
         else:
