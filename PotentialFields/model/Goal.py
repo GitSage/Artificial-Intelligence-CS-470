@@ -16,8 +16,9 @@ class Goal():
     def getAngleToGoalFrom(self, x, y):
         return numpy.arctan2(self._y - y, self._x - x)
 
-    def __init__(self, x, y, radius, spread):
+    def __init__(self, x, y, radius, spread, alpha=1):
         self._x = x # the x-coordinate of the center of the goal object.
         self._y = y # the y-coordinate of the center of the goal object.
-        self.radius = radius
+        self._radius = radius
         self._spread = spread
+        self._alpha = alpha
