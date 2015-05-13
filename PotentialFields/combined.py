@@ -138,7 +138,7 @@ class Combined():
     #--------------------------MY CODE----------------------------
     def __init__(self, goals, obstacles, tangentialsClockwise, tangentialsCounterclockwise):
         #Initialize variables first!
-        self._FILE_NAME = 'attractive_and_repulsive_fields.png' #File name to save the figure as.
+        self._FILE_NAME = 'combined.png' #File name to save the figure as.
         self._goals = goals #List of "Goal" objects to make an attractive field of.
         self._obstacles = obstacles #List of "Obstacle" objects to make a repulsive field of.
         self._tangentialsClockwise = tangentialsClockwise #List of "TangentialClockwise" objects to make a tangential field of.

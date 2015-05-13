@@ -99,7 +99,7 @@ class TangentialFields():
     #--------------------------MY CODE----------------------------
     def __init__(self, tangentialsClockwise, tangentialsCounterclockwise):
         #Initialize variables first!
-        self._FILE_NAME = 'repulsive_fields.png' #File name to save the figure as.
+        self._FILE_NAME = 'tangential_fields.png' #File name to save the figure as.
         self._tangentialsClockwise = tangentialsClockwise #List of "TangentialClockwise" objects to make a tangential field of.
         self._tangentialsCounterclockwise = tangentialsCounterclockwise #List of "TangentialCounterclockwise" objects to make a tangential field of.
 
