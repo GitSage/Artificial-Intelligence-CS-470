@@ -139,10 +139,21 @@ class PDFlagRetriever(Agent):
         # attractive. One flag that I chose at random.
         logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
 
-        if len(self.state.obstacles) == 4:
+        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=20, alpha=1),)
 
+        if len(self.state.obstacles) == 4:
+            tangential.append(TangentialObject(x=121.2132034355, y=21.2132034356, radius=30, spread=60, alpha=1))
+
+            #LEFT
+            tangential.append(TangentialObject(x=-78.78679656439999, y=21.2132034356, radius=30, spread=60, alpha=1,
+                                               clockwise=False))
+
+            #TOP
+            tangential.append(TangentialObject(x=21.2132034356, y=121.2132034355, radius=30, spread=60, alpha=1))
+
+            #BOTTOM
+            tangential.append(TangentialObject(x=21.2132034356, y=-78.78679656439999, radius=30, spread=60, alpha=1))
         else:
-            attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1600, alpha=1),)
 
             # Top Left L
             tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=100, alpha=1))
@@ -177,13 +188,13 @@ class PDFlagRetriever(Agent):
     def return_to_base(self):
         self.attacking = False
         base_coords = self.state.me.base.get_centerpoint()
-        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=1000000, alpha=1)]
+        attractive = [AttractiveObject(x=base_coords['x'], y=base_coords['y'], radius=10, spread=20, alpha=1)]
         self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
 
     def attack_enemy_flag(self):
         self.attacking = True
         flag = self.state.flags[self.flag_index]
-        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1)]
+        attractive = [AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=20, alpha=1)]
         self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
 
 

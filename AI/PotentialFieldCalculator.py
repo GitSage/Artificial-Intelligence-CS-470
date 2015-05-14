@@ -160,6 +160,15 @@ class RepulsiveObject(PotentialFieldObject):
 
 class TangentialObject(PotentialFieldObject):
 
+    def __init__(self, x, y, radius, spread, alpha, clockwise=True):
+
+        self.x = x  # the x-coordinate of the center of the goal object.
+        self.y = y  # the y-coordinate of the center of the goal object.
+        self.r = radius
+        self.s = spread
+        self.a = alpha
+        self.clockwise = clockwise
+
     def get_vec(self, x, y):
         ang = self.ang(x, y)
         d = self.dist(x, y)
@@ -169,13 +178,13 @@ class TangentialObject(PotentialFieldObject):
         if d < self.r:
             xval = (-math.copysign(1, math.cos(ang))*float('inf'))
             yval = (-math.copysign(1, math.sin(ang))*float('inf'))
-            return self.rotate_vec([xval, yval], clockwise=True)
+            return self.rotate_vec([xval, yval], clockwise=self.clockwise)
 
         # If the agent is outside the goal but inside the spread, calculate the effect
         elif self.r <= d <= self.s + self.r:
             xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
             yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
-            return self.rotate_vec([xval, yval], clockwise=True)
+            return self.rotate_vec([xval, yval], clockwise=self.clockwise)
 
         # If the agent is outside the spread, no effect
         else:
