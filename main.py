@@ -9,7 +9,7 @@ from AI.State import State
 from AI.Agents import *
 
 
-PLAYER = 'red'
+PLAYER = 'purple'
 LOG_FILENAME = 'log.log'
 TIME_PER_SLEEP = .1
 hello_var = 0

@@ -139,35 +139,38 @@ class PDFlagRetriever(Agent):
         # attractive. One flag that I chose at random.
         logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
 
-        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=10),)
+        if len(self.state.obstacles) == 4:
 
-        # Top Left L
-        tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=150, alpha=10))
-        tangential.append(TangentialObject(x=-90, y=180, radius=30, spread=150, alpha=10))
-        tangential.append(TangentialObject(x=-150, y=120, radius=30, spread=150, alpha=10))
+        else:
+            attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1600, alpha=1),)
 
-        # Top Right L
-        tangential.append(TangentialObject(x=150, y=120, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=150, y=180, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=210, y=120, radius=30, spread=100, alpha=1))
+            # Top Left L
+            tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=-90, y=180, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=-150, y=120, radius=30, spread=100, alpha=1))
 
-        # Bottom Right L
-        tangential.append(TangentialObject(x=150, y=-120, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=210, y=-120, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=150, y=-180, radius=30, spread=100, alpha=1))
+            # Top Right L
+            tangential.append(TangentialObject(x=150, y=120, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=150, y=180, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=210, y=120, radius=30, spread=100, alpha=1))
 
-        # Bottom Left L
-        tangential.append(TangentialObject(x=-90, y=-120, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=-90, y=-180, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=-150, y=-120, radius=30, spread=100, alpha=1))
+            # Bottom Right L
+            tangential.append(TangentialObject(x=150, y=-120, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=210, y=-120, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=150, y=-180, radius=30, spread=100, alpha=1))
 
-        # Top Left L
-        tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=-90, y=180, radius=30, spread=100, alpha=1))
-        tangential.append(TangentialObject(x=-150, y=120, radius=30, spread=100, alpha=1))
+            # Bottom Left L
+            tangential.append(TangentialObject(x=-90, y=-120, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=-90, y=-180, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=-150, y=-120, radius=30, spread=100, alpha=1))
 
-        # Middle Rectangular Obstacle
-        tangential.append(TangentialObject(x=0, y=10, radius=60, spread=100, alpha=1))
+            # Top Left L
+            tangential.append(TangentialObject(x=-90, y=120, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=-90, y=180, radius=30, spread=100, alpha=1))
+            tangential.append(TangentialObject(x=-150, y=120, radius=30, spread=100, alpha=1))
+
+            # Middle Rectangular Obstacle
+            tangential.append(TangentialObject(x=0, y=10, radius=60, spread=100, alpha=1))
 
         return PotentialFieldCalculator(attractive, repulsive, tangential)
 

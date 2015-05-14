@@ -95,7 +95,7 @@ class Config:
         ## game behavior
         p.add_option('--world',
             dest='world',
-            default='maps/four_ls.bzw',
+            default='maps/rotated_box_world.bzw',
             help='specify a world.bzw map to use')
         p.add_option('--world-size',
             dest='world_size',
