@@ -11,7 +11,7 @@ from AI.Agents import *
 
 PLAYER = 'red'
 LOG_FILENAME = 'log.log'
-TIME_PER_SLEEP = 1
+TIME_PER_SLEEP = 0.1
 hello_var = 0
 state = None
 messenger = None
@@ -34,8 +34,8 @@ def main():
     # assign agents to tanks
     # ReallyDumbAgent('0', state)
     BayesianGridSearchAgent('1', state)
-    BayesianGridSearchAgent('2', state)
-    BayesianGridSearchAgent('3', state)
+    #BayesianGridSearchAgent('2', state)
+    #BayesianGridSearchAgent('3', state)
     # PDFlagRetriever('4', 'purple', state)
     # PDFlagRetriever('5', 'purple', state)
     # PDFlagRetriever('6', 'purple', state)
@@ -51,10 +51,6 @@ def parse_args():
 
     # analyze arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--spread-out',
-                        action='store_true',
-                        help='Causes your army to spread out before anything else.',
-                        required=False)
     parser.add_argument('-p',
                         '--port',
                         type=int,
@@ -81,7 +77,6 @@ def t_start_game():
         line = proc.stdout.readline().split(" ")
         ports[line[2][:-1]] = int(line[-1])
     print ports
-
 
 def init_logging():
     logging.basicConfig(level=logging.INFO)

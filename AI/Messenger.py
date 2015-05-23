@@ -53,7 +53,8 @@ class Messenger:
         self.sock.send("constants")
 
     def occgrid(self, tank):
-        self.sock.send("occgrid %d" % tank)
+        occgrid = self.sock.send("occgrid %d" % tank)
+
 
     def get_list_from_response(self, msg):
         msg = msg[msg.index('\n')+1:]  # remove first line ("ack...")

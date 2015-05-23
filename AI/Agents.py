@@ -223,6 +223,8 @@ class BayesianGridSearchAgent(Agent):
         # set up tank
         tank = self.state.mytanks[self.tank_index]
         self.time_since_goal_change += Timer.TIME_PER_SLEEP
+        if self.time_since_goal_change.is_integer():
+            print self.time_since_goal_change
 
         self.check_new_direction(tank)
 
@@ -247,7 +249,7 @@ class BayesianGridSearchAgent(Agent):
             self.new_direction()
 
         # check if tank arrived at goal
-        if tank.x == self.goal_x and tank.y is self.goal_y:
+        if abs(tank.x - self.goal_x) < 10 and abs(tank.y - self.goal_y) < 10:
             print "Tank %s arrived at goal, changing direction" % self.tank_index
             self.new_direction()
 
