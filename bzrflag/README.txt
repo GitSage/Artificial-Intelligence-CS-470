@@ -1,0 +1,1 @@
+To run the program, go to the root directory and run ./main.py.

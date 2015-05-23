@@ -143,8 +143,8 @@ class RepulsiveObject(PotentialFieldObject):
         # If the agent is inside the repulsive object, push away infinitely hard
         if d < self.r:
             # copysign(1, a) == numpy.sign(a)
-            xval = (-math.copysign(1, math.cos(ang))*float('inf'))  # TODO: these look wrong
-            yval = (-math.copysign(1, math.sin(ang))*float('inf'))  # TODO: these look wrong
+            xval = (-math.copysign(1, math.cos(ang))*float('inf'))
+            yval = (-math.copysign(1, math.sin(ang))*float('inf'))
             return [xval, yval]
 
         # If the agent is outside the repulsive object but inside the spread, calculate the effect
@@ -160,6 +160,15 @@ class RepulsiveObject(PotentialFieldObject):
 
 class TangentialObject(PotentialFieldObject):
 
+    def __init__(self, x, y, radius, spread, alpha, clockwise=True):
+
+        self.x = x  # the x-coordinate of the center of the goal object.
+        self.y = y  # the y-coordinate of the center of the goal object.
+        self.r = radius
+        self.s = spread
+        self.a = alpha
+        self.clockwise = clockwise
+
     def get_vec(self, x, y):
         ang = self.ang(x, y)
         d = self.dist(x, y)
@@ -167,13 +176,15 @@ class TangentialObject(PotentialFieldObject):
         # TODO all of these
         # If the agent is already on the goal, push away infinitely hard
         if d < self.r:
-            return [sys.maxint, sys.maxint]
+            xval = (-math.copysign(1, math.cos(ang))*float('inf'))
+            yval = (-math.copysign(1, math.sin(ang))*float('inf'))
+            return self.rotate_vec([xval, yval], clockwise=self.clockwise)
 
         # If the agent is outside the goal but inside the spread, calculate the effect
         elif self.r <= d <= self.s + self.r:
             xval = -1 * self.a * (self.s + self.r - d) * math.cos(ang)
             yval = -1 * self.a * (self.s + self.r - d) * math.sin(ang)
-            return self.rotate_vec([xval, yval], clockwise=True)
+            return self.rotate_vec([xval, yval], clockwise=self.clockwise)
 
         # If the agent is outside the spread, no effect
         else:
