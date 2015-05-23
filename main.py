@@ -11,7 +11,7 @@ from AI.Agents import *
 
 PLAYER = 'red'
 LOG_FILENAME = 'log.log'
-TIME_PER_SLEEP = .1
+TIME_PER_SLEEP = 1
 hello_var = 0
 state = None
 messenger = None
@@ -33,9 +33,9 @@ def main():
 
     # assign agents to tanks
     # ReallyDumbAgent('0', state)
-    PDFlagRetriever('1', 'green', state)
-    PDFlagRetriever('2', 'blue', state)
-    PDFlagRetriever('3', 'purple', state)
+    BayesianGridSearchAgent('1', state)
+    BayesianGridSearchAgent('2', state)
+    BayesianGridSearchAgent('3', state)
     # PDFlagRetriever('4', 'purple', state)
     # PDFlagRetriever('5', 'purple', state)
     # PDFlagRetriever('6', 'purple', state)

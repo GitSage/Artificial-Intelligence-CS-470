@@ -183,55 +183,88 @@ class PDFlagRetriever(Agent):
         self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
 
 
+class BayesianGridSearchAgent(Agent):
 
+    def __init__(self, tank_index, state):
+        self.tank_index = tank_index
+        self.state = state
 
+        # the tank should change goals periodically
+        self.time_since_goal_change = 0
+        self.goal_x = 0
+        self.goal_y = 0
 
+        self.pdcontroller = PDController()
+        self.pfc = self.setup_potential_fields()
 
+        # these variables are used to check if we're stuck
+        self.time_without_moving = 0
+        self.prev_x = 0
+        self.prev_y = 0
 
+        self.timer_id = Timer.add_task(self.bayesian_grid_search)
 
+    def bayesian_grid_search(self):
+        # set up tank
+        tank = self.state.mytanks[self.tank_index]
+        self.time_since_goal_change += Timer.TIME_PER_SLEEP
 
+        self.check_new_direction(tank)
 
+        # get the vector suggested by the potential field
+        pf_vec = self.pfc.potential_fields_calc(tank.x, tank.y)
 
+        # give the vector to the pd controller for actionable speed and angvel
+        next_action = self.pdcontroller.get_next_action(tank, pf_vec)
 
+        # act upon the new speed and angvel
+        tank.speed(next_action['speed'])
+        tank.set_angvel(next_action['angvel'])
+        self.state.update_mytanks()
+        self.state.update_flags()
+        self.prev_x = tank.x
+        self.prev_y = tank.y
 
+    def check_new_direction(self, tank):
+        # check if stuck
+        if self.is_stuck(tank):
+            print "Tank %s stuck, changing direction" % self.tank_index
+            self.new_direction()
 
+        # check if tank arrived at goal
+        if tank.x == self.goal_x and tank.y is self.goal_y:
+            print "Tank %s arrived at goal, changing direction" % self.tank_index
+            self.new_direction()
 
+        # check if tank hasn't changed direction in a long time
+        if self.time_since_goal_change > 60:
+            print "Tank %s timeout, changing direction" % self.tank_index
+            self.new_direction()
 
+    def is_stuck(self, tank):
+        # check if I've moved recently
+        if tank.x == self.prev_x and tank.y == self.prev_y:
+            self.time_without_moving += Timer.TIME_PER_SLEEP
 
+            # check if I'm stuck. Considered "stuck" if I haven't changed position in 1 second.
+            if self.time_without_moving > 1:
+                tank.shoot()
+                self.time_without_moving = 0
+                return True
 
+    def new_direction(self):
+        self.goal_x = random.randint(-400, 400)
+        self.goal_y = random.randint(-400, 400)
+        self.time_since_goal_change = 0
+        attractive = [AttractiveObject(x=self.goal_x, y=self.goal_y, radius=10, spread=1000000, alpha=1000)]
+        self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
+        print "Tank %s new goal (%f,%f)" % (self.tank_index, self.goal_x, self.goal_y)
 
-
-
-
-
-        '''flag = self.state.flags[self.flag_index]
-
+    def setup_potential_fields(self):
         attractive = []
         repulsive = []
         tangential = []
+        self.pfc = PotentialFieldCalculator(attractive, repulsive, tangential)
+        self.new_direction()
 
-        # attractive. One flag that I chose at random.
-        logging.debug("Tank %s is seeking flag %s", self.tank_index, str(flag))
-        attractive.append(AttractiveObject(x=flag.x, y=flag.y, radius=10, spread=1000000, alpha=1),)
-
-        # repulsive. The corner of every obstacle gets a small, hard repulsive field, and the center gets a large, weak
-        # field.
-        obstacles = self.state.obstacles
-        for obstacle in obstacles:
-            # for point in obstacle.points:
-                # repulsive.append(RepulsiveObject(x=point[0], y=point[1], radius=1, spread=6, alpha=10))
-            centerpoint = obstacle.get_centerpoint()
-            repulsive.append(RepulsiveObject(x=centerpoint['x'], y=centerpoint['y'], radius=1,
-                                             spread=obstacle.get_radius()+10, alpha=10))
-
-        # tangential. Same rules as repulsive.
-        obstacles = self.state.obstacles
-        for obstacle in obstacles:
-            # for point in obstacle.points:
-                # tangential.append(TangentialObject(x=point[0], y=point[1], radius=1, spread=6, alpha=10))
-            centerpoint = obstacle.get_centerpoint()
-            tangential.append(TangentialObject(x=centerpoint['x'], y=centerpoint['y'], radius=1,
-                                               spread=obstacle.get_radius()+10, alpha=30))
-
-        return PotentialFieldCalculator(attractive, repulsive, tangential)'''
-
+        return self.pfc
