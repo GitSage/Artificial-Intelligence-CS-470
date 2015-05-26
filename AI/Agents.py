@@ -4,7 +4,6 @@ from Timer import Timer
 from PotentialFieldCalculator import *
 from PDController import PDController
 
-
 class Agent:
 
     def __init__(self, tank_index, state):
@@ -200,9 +199,11 @@ class PDFlagRetriever(Agent):
 
 class BayesianGridSearchAgent(Agent):
 
-    def __init__(self, tank_index, state):
+    def __init__(self, tank_index, bay_vis, bay_filter, state):
         self.tank_index = tank_index
         self.state = state
+        self.bay_vis = bay_vis
+        self.bay_filter = bay_filter
 
         # the tank should change goals periodically
         self.time_since_goal_change = 0
@@ -241,6 +242,9 @@ class BayesianGridSearchAgent(Agent):
         self.state.update_flags()
         self.prev_x = tank.x
         self.prev_y = tank.y
+
+        # ask the server for current position and update the Grid Filter
+        self.update_grid()
 
     def check_new_direction(self, tank):
         # check if stuck
@@ -285,3 +289,9 @@ class BayesianGridSearchAgent(Agent):
         self.new_direction()
 
         return self.pfc
+
+    def update_grid(self):
+        x, y, grid = self.state.update_occgrid(self.tank_index)  # ask the server for the occgrid
+        self.bay_filter.test(grid, x, y)  # run it through the fake bayesian filter
+        # self.bay_filter.bayesian_grid(grid, x, y)  # run it through the bayesian filter
+        self.bay_vis.update_and_draw_grid(self.bay_filter.model)  # draw it

@@ -61,6 +61,39 @@ class State:
             if newbase.team_color == self.me.color:
                 self.me.base = newbase
 
+    def update_occgrid(self, tank_index):
+        x, y, grid = self.messenger.occgrid(tank_index)
+        return x, y, self.parse_occgrid_from_list(grid)
+
+    def parse_occgrid_from_list(self, str_list):
+        """
+        The messenger will give the following:
+        at 20,20
+        size 5x4
+        0110
+        0111
+        0111
+        0001
+        0100
+
+        We will convert that into an array like this:
+        [[00000]
+         [11101]
+         [11100]
+         [01110]]
+
+        :return array: an array like the one described above
+        """
+        result = []
+        for line in str_list.split('\n'):
+            result.append(list(line))
+        # reflect on the tl-br diagonal
+        rotated = [[0 for x in range(len(result))] for x in range(len(result[0]))]
+        for row in range(0, len(result)):
+            for col in range(0, len(result[0])):
+                rotated[col][row] = result[row][col]
+
+        return result
 
 class Me:
 

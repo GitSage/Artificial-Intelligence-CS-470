@@ -21,13 +21,13 @@ class BayesianGridVisualizer():
         glutSwapBuffers()
 
     def update_grid(self, new_grid):
-        self._grid = new_grid
+        self._grid = numpy.array(new_grid)
 
     def update_and_draw_grid(self, new_grid):
-        '''
+        """
         Overwrites current grid with this grid, and saves this grid in the class variables.
         :param new_grid: a numpy array containing the grayscale values to graph.
-        '''
+        """
         self.update_grid(new_grid)
         self.draw_grid()
 
@@ -53,8 +53,9 @@ class BayesianGridVisualizer():
         self._grid = None
         self._window = None
 
+
 def Test():
-    #grid characteristics
+    # grid characteristics
     mapMinX = -400
     mapMinY = -400
     mapMaxX = 400

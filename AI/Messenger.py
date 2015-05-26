@@ -53,8 +53,8 @@ class Messenger:
         self.sock.send("constants")
 
     def occgrid(self, tank):
-        occgrid = self.sock.send("occgrid %d" % tank)
-
+        x, y, grid = self.parse_occgrid_response(self.sock.send("occgrid %s" % tank))
+        return x, y, grid
 
     def get_list_from_response(self, msg):
         msg = msg[msg.index('\n')+1:]  # remove first line ("ack...")
@@ -64,6 +64,32 @@ class Messenger:
         msg = re.sub(' +', ' ', msg).strip()  # reduce multiple spaces to a single space
 
         return msg
+
+    def parse_occgrid_response(self, msg):
+        """
+        An example message looks like this:
+        ack 0.258136987686 occgrid
+        begin
+        at -400,-35
+        size 4x4
+        0000
+        0000
+        0000
+        0000
+        end
+        :param msg: the message from the server as above
+        :return: x, y, grid, where x and y are the locations mentioned ("at -400, -35") and the grid is the list
+                 following that.
+        """
+        msg = msg[msg.index('\n')+1:]  # remove first line ("ack...")
+        msg = msg[msg.index('\n')+1:]  # remove second line ("begin")
+        msg = msg[:msg.rfind('\n')]  # remove last line ("\n")
+        msg = msg[:msg.rfind('\n')]  # remove second to last line ("end")
+        x, y = ((msg.split("\n")[0]).split(" ")[1]).split(",")
+        msg = msg[msg.index('\n')+1:]  # remove third line ("at -400,-35")
+        msg = msg[msg.index('\n')+1:]  # remove fourth line ("size 4x4")
+
+        return x, y, msg
 
 
 class BZSocket:

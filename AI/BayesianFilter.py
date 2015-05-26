@@ -2,33 +2,18 @@ __author__ = 'byocum'
 
 class BayesianFilter:
 
-    def __init__(self, model):
-        self.model = model  # this is an array of probabilities. Initially equal to 0.5, 0.5.
-
-    def parse_occgrid_from_list(self):
+    def __init__(self, width, height):
         """
-        The messenger will give the following:
-        at 20,20
-        size 5x4
-        0110
-        0111
-        0111
-        0001
-        0100
-
-        We will convert that into an array like this:
-        [[00000]
-         [11101]
-         [11100]
-         [01110]]
-
-        :return array: an array like the one described above
+        Initializes the filter with an array of size (width,height).
+        :param width:
+        :param height:
+        :return:
         """
-
-        pass
+        # this is an array of probabilities. Initially equal to 0.5.
+        self.model = [[0.5 for x in range(height)] for x in range(width)]
 
     # ONLY WORK ON THIS FUNCTION
-    def bayesian_grid(visible_grid, x, y):
+    def bayesian_grid(self, visible_grid, x, y):
         """
         Runs visible_grid through a Bayesian filter and then updates self.model with the new information.
         :param visible_grid: a python 2d array of 0s and 1s. Size variable. Centered on the location specified by x, y.
@@ -39,3 +24,4 @@ class BayesianFilter:
         """
 
         pass
+    
