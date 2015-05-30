@@ -41,12 +41,11 @@ class BayesianFilter:
 
         for row in range (0, len(visible_grid)):
             for col in range (0, len(visible_grid[row])):
-                print "row/col = " + str(row) + " " + str(col)
-                print "row-y/col-x = " + str(row-y) + " " + str(col-x)
                 modelRow = row + 400 + y
                 modelCol = col + 400 + x
                 if((modelRow < 800) and (modelRow >= 0) and (modelCol < 800) and (modelCol >= 0)):
-                    self.model[modelRow][modelCol] = 1.0 - self.updateBayes(observation=int(visible_grid[row][col]), prior=self.model[modelRow][modelCol])
+                    self.model[modelRow][modelCol] = 1.0 - self.updateBayes(observation=visible_grid[row][col],
+                                                                            prior=self.model[modelRow][modelCol])
 
 
     def updateBayes(self, observation, prior):
@@ -66,5 +65,10 @@ class BayesianFilter:
             return new_prior
 
     def test(self, visible_grid, x, y):
-        self.bayesian_grid(visible_grid, x, y)
+        for row in range (0, len(visible_grid)):
+            for col in range (0, len(visible_grid[row])):
+                modelRow = row + 400 + y
+                modelCol = col + 400 + x
+                if((modelRow < 800) and (modelRow >= 0) and (modelCol < 800) and (modelCol >= 0)):
+                    self.model[modelRow][modelCol] = 1.0 - visible_grid[row][col]
 

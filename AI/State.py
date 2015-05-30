@@ -91,9 +91,9 @@ class State:
         rotated = [[0 for x in range(len(result))] for x in range(len(result[0]))]
         for row in range(0, len(result)):
             for col in range(0, len(result[0])):
-                rotated[col][row] = result[row][col]
+                rotated[col][row] = float(result[row][col])
 
-        return result
+        return rotated
 
 class Me:
 
