@@ -12,7 +12,7 @@ class BayesianFilter:
         # this is an array of probabilities. Initially equal to 0.5.
         self.model = [[0.5 for x in range(height)] for x in range(width)]
         #TODO: Make True_negative and true_positive parameters!
-        self.true_negative = 0.90
+        self.true_negative = 0.9
         self.true_positive = 0.97
         self.false_negative = 1.0 - self.true_positive
         self.false_positive = 1.0 - self.true_negative
@@ -45,7 +45,7 @@ class BayesianFilter:
                 modelCol = col + 400 + x
                 if((modelRow < 800) and (modelRow >= 0) and (modelCol < 800) and (modelCol >= 0)):
                     self.model[modelRow][modelCol] = 1.0 - self.updateBayes(observation=visible_grid[row][col],
-                                                                            prior=self.model[modelRow][modelCol])
+                                                                            prior=1.0 -self.model[modelRow][modelCol])
 
 
     def updateBayes(self, observation, prior):
@@ -72,3 +72,8 @@ class BayesianFilter:
                 if((modelRow < 800) and (modelRow >= 0) and (modelCol < 800) and (modelCol >= 0)):
                     self.model[modelRow][modelCol] = 1.0 - visible_grid[row][col]
 
+
+if __name__ == "__main__":
+    bf = BayesianFilter(800,800)
+    print "Result1: " + str(bf.updateBayes(0, 0.63))
+    print "Result2: " + str(bf.updateBayes(1, 0.72))
