@@ -17,7 +17,8 @@ hello_var = 0
 state = None
 messenger = None
 game = None
-
+true_positive = 0.97
+true_negative = 0.5
 
 def main():
     global messenger, state, TIME_PER_SLEEP, PLAYER
@@ -41,9 +42,17 @@ def main():
     if args.bayesian_filter is True:
         bay_vis = BayesianGridVisualizer()
         bay_vis.init_window(800, 800)
-        bay_filter = BayesianFilter(800, 800)
+        bay_filter = BayesianFilter(800, 800, true_positive, true_negative)
+        BayesianGridSearchAgent('0', bay_vis, bay_filter, state)
         BayesianGridSearchAgent('1', bay_vis, bay_filter, state)
-
+        BayesianGridSearchAgent('2', bay_vis, bay_filter, state)
+        BayesianGridSearchAgent('3', bay_vis, bay_filter, state)
+        BayesianGridSearchAgent('4', bay_vis, bay_filter, state)
+        #BayesianGridSearchAgent('5', bay_vis, bay_filter, state)
+        #BayesianGridSearchAgent('6', bay_vis, bay_filter, state)
+        #BayesianGridSearchAgent('7', bay_vis, bay_filter, state)
+        #BayesianGridSearchAgent('8', bay_vis, bay_filter, state)
+        #BayesianGridSearchAgent('9', bay_vis, bay_filter, state)
     # assign agents to tanks
     # ReallyDumbAgent('0', state)
     # BayesianGridSearchAgent('1', bay_vis, bay_filter, state)
@@ -91,7 +100,9 @@ def start_game():
 
 def t_start_game():
     global ports
-    proc = subprocess.Popen(["python", "bin/bzrflag", "--default-true-positive=.97", "--default-true-negative=.9",
+    print str(true_positive)
+    print str(true_negative)
+    proc = subprocess.Popen(["python", "bin/bzrflag", "--default-true-positive=" + str(true_positive), "--default-true-negative=" + str(true_negative),
                              "--occgrid-width=100", "--no-report-obstacles"], stdout=subprocess.PIPE)
     ports = {}
     for i in range(0, 4):
