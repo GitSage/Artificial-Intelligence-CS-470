@@ -91,10 +91,13 @@ def start_game():
 
 def t_start_game():
     global ports
-    proc = subprocess.Popen(["python", "bin/bzrflag"], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["python", "bin/bzrflag", "--default-true-positive=.97", "--default-true-negative=.9",
+                             "--occgrid-width=100", "--no-report-obstacles"], stdout=subprocess.PIPE)
     ports = {}
     for i in range(0, 4):
         line = proc.stdout.readline().split(" ")
+        print line
+
         ports[line[2][:-1]] = int(line[-1])
     print ports
 
