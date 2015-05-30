@@ -274,8 +274,13 @@ class BayesianGridSearchAgent(Agent):
                 return True
 
     def new_direction(self):
-        self.goal_x = random.randint(-400, 400)
-        self.goal_y = random.randint(-400, 400)
+        found_goal = False
+        for i in range (0, 2):
+            self.goal_x = random.randint(-400, 400)
+            self.goal_y = random.randint(-400, 400)
+            if not self.bay_filter.already_explored(self.goal_x, self.goal_y):
+                break
+
         self.time_since_goal_change = 0
         attractive = [AttractiveObject(x=self.goal_x, y=self.goal_y, radius=10, spread=1000000, alpha=1000)]
         self.pfc.update(attractive, self.pfc.repulsive, self.pfc.tangential)
