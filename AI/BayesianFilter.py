@@ -2,7 +2,7 @@ __author__ = 'byocum'
 
 class BayesianFilter:
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, true_positive=0.9, true_negative=0.97):
         """
         Initializes the filter with an array of size (width,height).
         :param width:
@@ -12,8 +12,8 @@ class BayesianFilter:
         # this is an array of probabilities. Initially equal to 0.5.
         self.model = [[0.5 for x in range(height)] for x in range(width)]
         #TODO: Make True_negative and true_positive parameters!
-        self.true_negative = 0.9
-        self.true_positive = 0.97
+        self.true_negative = true_positive
+        self.true_positive = true_negative
         self.false_negative = 1.0 - self.true_positive
         self.false_positive = 1.0 - self.true_negative
 
