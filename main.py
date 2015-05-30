@@ -25,7 +25,7 @@ def main():
     init_logging()
     args = parse_args()
 
-    # no port specified. Start a game and connect to it.
+    # if no port specified, start a game and connect to it.
     if args.port is None or args.port is "":
         start_game()
         port = ports[PLAYER]
@@ -45,7 +45,7 @@ def main():
         BayesianGridSearchAgent('1', bay_vis, bay_filter, state)
 
     # assign agents to tanks
-    # ReallyDumbAgent('0', state)
+    ReallyDumbAgent('0', state)
     # BayesianGridSearchAgent('1', bay_vis, bay_filter, state)
     # BayesianGridSearchAgent('2', state)
     # BayesianGridSearchAgent('3', state)

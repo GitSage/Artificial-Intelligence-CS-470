@@ -24,4 +24,12 @@ class BayesianFilter:
         """
 
         pass
-    
+
+    def test(self, visible_grid, x, y):
+        self.assign_grid(visible_grid, x, y)
+
+    def assign_grid(self, small_grid, x, y):
+        for i in range (0, len(small_grid)):
+            for j in range (0, len(small_grid[0])):
+                if i + x < len(small_grid) and j + y < len(small_grid):
+                    self.model[i+x][j+y] = small_grid[i][j]

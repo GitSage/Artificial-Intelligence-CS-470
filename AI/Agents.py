@@ -292,6 +292,6 @@ class BayesianGridSearchAgent(Agent):
 
     def update_grid(self):
         x, y, grid = self.state.update_occgrid(self.tank_index)  # ask the server for the occgrid
-        self.bay_filter.test(grid, x, y)  # run it through the fake bayesian filter
+        self.bay_filter.test(grid, int(x), int(y))  # run it through the fake bayesian filter
         # self.bay_filter.bayesian_grid(grid, x, y)  # run it through the bayesian filter
         self.bay_vis.update_and_draw_grid(self.bay_filter.model)  # draw it
