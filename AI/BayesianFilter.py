@@ -72,6 +72,9 @@ class BayesianFilter:
                 if((modelRow < 800) and (modelRow >= 0) and (modelCol < 800) and (modelCol >= 0)):
                     self.model[modelRow][modelCol] = 1.0 - visible_grid[row][col]
 
+    def already_explored(self, x, y):
+        return self.model[y+400][x+400] > .99 or self.model[y+400][x+400] < 0.01
+
 
 if __name__ == "__main__":
     bf = BayesianFilter(800,800)
