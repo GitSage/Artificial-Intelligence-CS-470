@@ -17,8 +17,8 @@ hello_var = 0
 state = None
 messenger = None
 game = None
-true_positive = 0.97
-true_negative = 0.5
+true_positive = 0.9
+true_negative = 0.9
 
 def main():
     global messenger, state, TIME_PER_SLEEP, PLAYER
@@ -43,6 +43,7 @@ def main():
         bay_vis = BayesianGridVisualizer()
         bay_vis.init_window(800, 800)
         bay_filter = BayesianFilter(800, 800, true_positive, true_negative)
+        #bay_filter = BayesianFilter(800, 800, 0.6, 0.6)
         BayesianGridSearchAgent('0', bay_vis, bay_filter, state)
         BayesianGridSearchAgent('1', bay_vis, bay_filter, state)
         BayesianGridSearchAgent('2', bay_vis, bay_filter, state)
