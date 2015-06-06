@@ -21,7 +21,7 @@ class PDController:
     def get_dir_to_goal(self, tank):
         # The direction I should be facing minus the direction that I am facing
         error = self.dir_error(tank)
-        new_dir = 1 * error + (0 * (error - self.prev_dir_error) / Timer.Timer.TIME_PER_SLEEP)
+        new_dir = 1 * error + (0 * (error - self.prev_dir_error) / Timer.Timer.TIME_PER_TICK)
         self.prev_dir_error = error
         return new_dir
 
@@ -29,8 +29,8 @@ class PDController:
         # The direction I should be facing minus the direction that I am facing
         errorx = self.speed_error(vec, self.prev_speedx_error)
         errory = self.speed_error(vec, self.prev_speedy_error)
-        newspeedx = 1 * errorx + 1 * (errorx - self.prev_speedx_error) / Timer.Timer.TIME_PER_SLEEP
-        newspeedy = 1 * errory + 1 * (errory - self.prev_speedy_error) / Timer.Timer.TIME_PER_SLEEP
+        newspeedx = 1 * errorx + 1 * (errorx - self.prev_speedx_error) / Timer.Timer.TIME_PER_TICK
+        newspeedy = 1 * errory + 1 * (errory - self.prev_speedy_error) / Timer.Timer.TIME_PER_TICK
         self.prev_speedx_error = errorx
         self.prev_speedy_error = errory
         print "errorx: ", errorx

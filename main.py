@@ -12,7 +12,7 @@ from AI.BayesianFilter import BayesianFilter
 
 PLAYER = 'red'
 LOG_FILENAME = 'log.log'
-TIME_PER_SLEEP = 0.1
+TIME_PER_TICK = 0.1
 hello_var = 0
 state = None
 messenger = None
@@ -21,7 +21,7 @@ true_positive = 0.9
 true_negative = 0.9
 
 def main():
-    global messenger, state, TIME_PER_SLEEP, PLAYER
+    global messenger, state, TIME_PER_TICK, PLAYER
 
     init_logging()
     args = parse_args()
@@ -36,7 +36,7 @@ def main():
     # connect to the server and set up global variables
     messenger = Messenger(port, 'localhost')
     state = State(messenger, PLAYER)
-    timer = Timer(TIME_PER_SLEEP)
+    timer = Timer(TIME_PER_TICK)
 
     # run lab 2
     if args.bayesian_filter is True:

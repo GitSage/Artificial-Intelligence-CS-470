@@ -44,7 +44,7 @@ class ReallyDumbAgent(Agent):
             tank.set_angvel(0)
             self.count = -1
 
-        self.count += Timer.TIME_PER_SLEEP
+        self.count += Timer.TIME_PER_TICK
 
 
 class PDFlagRetriever(Agent):
@@ -101,7 +101,7 @@ class PDFlagRetriever(Agent):
     def check_stuck(self, tank):
         # check if I've moved recently
         if tank.x == self.prev_x and tank.y == self.prev_y:
-            self.time_without_moving += Timer.TIME_PER_SLEEP
+            self.time_without_moving += Timer.TIME_PER_TICK
             tank.shoot()
 
             # check if I'm stuck. Considered "stuck" if I haven't changed position in 5 seconds.
@@ -117,7 +117,7 @@ class PDFlagRetriever(Agent):
 
 
                 # add to the stuck timer. If it's longer than 10 seconds, reset to 0.
-                self.time_spent_stuck += Timer.TIME_PER_SLEEP
+                self.time_spent_stuck += Timer.TIME_PER_TICK
                 if self.time_spent_stuck >= 2.5:
                     self.time_spent_stuck = 0
 
@@ -223,7 +223,7 @@ class BayesianGridSearchAgent(Agent):
     def bayesian_grid_search(self):
         # set up tank
         tank = self.state.mytanks[self.tank_index]
-        self.time_since_goal_change += Timer.TIME_PER_SLEEP
+        self.time_since_goal_change += Timer.TIME_PER_TICK
         if self.time_since_goal_change.is_integer():
             print self.time_since_goal_change
 
@@ -265,7 +265,7 @@ class BayesianGridSearchAgent(Agent):
     def is_stuck(self, tank):
         # check if I've moved recently
         if tank.x == self.prev_x and tank.y == self.prev_y:
-            self.time_without_moving += Timer.TIME_PER_SLEEP
+            self.time_without_moving += Timer.TIME_PER_TICK
 
             # check if I'm stuck. Considered "stuck" if I haven't changed position in 1 second.
             if self.time_without_moving > 1:
