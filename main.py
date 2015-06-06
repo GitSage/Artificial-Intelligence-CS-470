@@ -39,7 +39,8 @@ def main():
                          "--no-report-obstacles"]
         elif args.kalman_filter is True:
             game_args = ["python", "bin/bzrflag", "--default-posnoise=5", "--red-tanks=1", "--blue-tanks=1",
-                         "--green-tanks=1", "--purple-tanks=1", "--no-report-obstacles"]
+                         "--green-tanks=1", "--purple-tanks=1", "--no-report-obstacles",
+                         '--world=maps/empty_condensed.bzw']
 
         start_game()
         port = ports[PLAYER]
@@ -76,9 +77,6 @@ def main():
         # set up enemy, including port, messenger, and state
         enemy_messenger = Messenger(enemy_port, 'localhost')
         enemy_state = State(enemy_messenger, 'blue')
-
-        game_args = ["python", "bin/bzrflag", "--default-posnoise=5", "--[red]-tanks=1", "--[blue]-tanks=1",
-                     "--[green]-tanks=1", "--[purple]-tanks=1", "--no-report-obstacles"]
         StationaryClayPigeon('0', enemy_state)
 
     # no lab was specified
