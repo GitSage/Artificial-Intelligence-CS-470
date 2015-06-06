@@ -223,7 +223,8 @@ class BayesianGridSearchAgent(Agent):
     def bayesian_grid_search(self):
         # set up tank
         tank = self.state.mytanks[self.tank_index]
-        self.time_since_goal_change += Timer.TIME_PER_TICK
+        self.time_since_goal_change += Timer.time_passed
+        print Timer.time_passed
         if self.time_since_goal_change.is_integer():
             print self.time_since_goal_change
 
@@ -265,7 +266,7 @@ class BayesianGridSearchAgent(Agent):
     def is_stuck(self, tank):
         # check if I've moved recently
         if tank.x == self.prev_x and tank.y == self.prev_y:
-            self.time_without_moving += Timer.TIME_PER_TICK
+            self.time_without_moving += Timer.time_passed
 
             # check if I'm stuck. Considered "stuck" if I haven't changed position in 1 second.
             if self.time_without_moving > 1:
