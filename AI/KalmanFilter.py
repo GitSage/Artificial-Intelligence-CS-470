@@ -18,7 +18,6 @@ class KalmanFilter():
 		# VARIABLES THAT DO NOT CHANGE
 		#-----------------------------------------------------------------------------
 
-
 		# ------------------ F ---------------
 		# Learning Suite: F
 		# Packet: A
@@ -32,6 +31,11 @@ class KalmanFilter():
                         [0, 0,  0,       1, dt, dt**2/2],
                         [0, 0,  0,       0, 1, dt],
                         [0, 0,  0,       0, -c, 1]])
+
+
+		# ------------------ F^T ---------------
+		# Description: Transpose of F
+		self.Ft = self.F.transpose()
 
 		# ------------------ H ---------------
 		# Learning Suite: H_k
