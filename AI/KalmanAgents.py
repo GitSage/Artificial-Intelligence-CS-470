@@ -4,6 +4,9 @@ import Agents
 import math
 from Timer import Timer
 import numpy as npy
+import matplotlib.pyplot as plt
+from matplotlib import animation
+import time
 
 class ClayPigeonAgent(Agents.Agent):
     pass
@@ -64,9 +67,9 @@ class KalmanAgent(Agents.Agent):
                          [0, 25]])
 
     def update(self):
-        FSFTsigx = self.F.dot(self.sig0).dot(self.F_trans) + self.sigx  # FΣtFT + Σx
-        HTBlahInverse = npy.inv(self.H.dot(FSFTsigx).dot(self.H_trans) + self.sigz)  # H(FΣtFT + Σx)HT + Σz)^−1
-        kalman_gain = FSFTsigx.dot(self.H_trans).dot(HTBlahInverse)  # Kt + 1 = (FΣtFT + Σx)HT(H(FΣtFT + Σx)HT + Σz)^−1
+        FSFTsigx = self.F.dot(self.sig0).dot(self.F_trans) + self.sigx
+        HTBlahInverse = npy.inv(self.H.dot(FSFTsigx).dot(self.H_trans) + self.sigz)
+        kalman_gain = FSFTsigx.dot(self.H_trans).dot(HTBlahInverse)
 
 
         # self.xt = self.F.dot(self.xt + kalman_gain).dot
@@ -85,12 +88,30 @@ class KalmanAgent(Agents.Agent):
             angle -= 2 * math.pi
         return angle
 
+
 class KalmanVisualizer:
-    pass
+    def __init__(self, width, height):
+        plt.ion()
+        self.x = 0
+        self.y = 0
+        self.r = 100
+        self.circle = plt.Circle((self.x, self.y), self.r, color='b')
+        plt.axis([-width/2, width/2, -height/2, height/2])
+
+        plt.gca().add_patch(self.circle)
+        plt.show()
+
+    def update(self, x, y, r):
+        self.circle.center = x, y
+        self.circle.radius = r
+        plt.draw()
 
 if __name__ == "__main__":
-    vis = KalmanVisualizer()
-    vis.init_window(800, 800)
-    vis.draw_circle()
+    vis = KalmanVisualizer(800, 800)
+    vis.update(0, 0, 10)
+    time.sleep(1)
+    vis.update(100, 100, 100)
+    time.sleep(1)
+    vis.update(-100, -100, 150)
     while 1:
         pass
