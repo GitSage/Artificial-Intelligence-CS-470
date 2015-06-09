@@ -4,7 +4,9 @@ import Agents
 import math
 from Timer import Timer
 import numpy as npy
+# import matplotlib
 # import matplotlib.pyplot as plt
+from KalmanFilter import KalmanFilter
 from PDController import PDController
 import time
 
@@ -18,7 +20,7 @@ class StationaryClayPigeon(ClayPigeonAgent):
 class ConstantVelocityClayPigeon(ClayPigeonAgent):
     def __init__(self, tank_index, state):
         self.state = state
-        self.state.mytanks['0'].speed(0.2)
+        self.state.mytanks['0'].speed(.6)
 
 class NonConformingClayPigeon(ClayPigeonAgent):
     def __init__(self, tank_index, state):
@@ -34,30 +36,50 @@ class KalmanAgent(Agents.Agent):
         self.tank_index = tank_index
         self.pdc = PDController()
         self.timer_id = Timer.add_task(self.update)
+        self.kfilter = KalmanFilter()
 
     def update(self):
-        angvel = self.getAngvelToTarget()
-        self.state.mytanks['0'].set_angvel(angvel)
+        # update state
+        self.state.update_mytanks()
+        self.state.update_othertanks()
 
-    def getAngvelToTarget(self):
+        tank = self.state.mytanks['0']
+        angvel = self.getAngvelToTarget(tank)
+
+        tank.set_angvel(angvel)
+
+    def getAngvelToTarget(self, tank):
         """
         Calculates the vector that we should be facing to kill the target, then uses the PDController to find the
         angular velocity required to face the target.
         This calculation is performed like this:
-        1. Use the Kalman Filter to get the predicted next location of the target.
+        1. Use the Kalman Filter to get the predicted location of the target.
         2. Add to that vector the distance that the target will travel while the bullet fires.
-        3. Pass the vector into the PDController to find the direction that we should face.
+        3. Pass the vector into the PDController to find the angular velocity that we need to face the right way
         :return float: the angular velocity that we need in order to correctly face the target.
         """
-        self.state.update_mytanks()
-        self.state.update_othertanks()
-        enemy_tank = self.state.othertanks[self.target_color][0]
-        ang = self.ang(enemy_tank.x, enemy_tank.y)
+        # get newest data about target
+        target = self.state.othertanks[self.target_color][0]
+
+        # get the angle to the target
+
+        # step 1: Kalman Filter
+        ut, width, height = self.kfilter.update(npy.array([[target.x], [target.y]]))
+        xpos, xvel, xacc, ypos, yvel, yacc = ut
+        print "Observed location: ", target.x, target.y
+        print "Result of Kalman Filter: ", xpos, xvel, xacc, ypos, yvel, yacc
+
+        # step 2: bullet travel time
+        t = math.sqrt((tank.x - target.x) ** 2 + (tank.y - target.y) ** 2) / 100
+        hitzone_x = xpos + xvel*t + 0.5  # * xacc * t**2 + 100 * math.cos(tank.x) * t
+        hitzone_y = ypos + yvel*t + 0.5  # * yacc * t**2 + 100 * math.sin(tank.y) * t
+
+        # step 3: PDController to find angular velocity
+        ang = self.ang(hitzone_x, hitzone_y)
+        # print ang
+        if abs(math.pi + tank.angle - ang) < 0.1:
+            tank.shoot()
         target_vec = [-math.cos(ang), -math.sin(ang)]
-
-        # step 1
-
-        # step 3
         next_action = self.pdc.get_next_action(self.state.mytanks[self.tank_index], target_vec)
         return next_action['angvel']
 

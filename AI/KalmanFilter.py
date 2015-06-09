@@ -3,16 +3,33 @@ import numpy
 import Timer
 
 class KalmanFilter():
-	def __init__(self, Ex, Ez):
+	def __init__(self):
 		'''
 		NOTE: Ex and Ez are given in advance and never change.
-
+		self.Ex = numpy.array([
+							  [0.1, 0.0, 0.0,   0.0,   0.0, 0.0],
+										  [0.0, 0.1, 0.0,   0.0,   0.0, 0.0],
+										  [0.0, 0.0, 100.0, 0.0,   0.0, 0.0],
+										  [0.0, 0.0, 0.0,   0.1,   0.0, 0.0],
+										  [0.0, 0.0, 0.0,   0.0,   0.1, 0.0],
+										  [0.0, 0.0, 0.0,   0.0,   0.0, 100.0]])
+		self.Ez = numpy.array([
+							  [25, 0],
+										  [0, 25]])
 		:param Ex: Transition noise variance. Transition noise ~ N(0, Ex). A.K.A. Rk in the packet.
 		:param Ez: Observation noise variance. Observation noise ~ N(0, Ez). A.K.A. Qk in the packet.
 		:return:
 		'''
-		self.Ex = Ex
-		self.Ez = Ez
+		self.Ex = numpy.array([
+							  [0.1, 0.0, 0.0,   0.0,   0.0, 0.0],
+							  [0.0, 0.1, 0.0,   0.0,   0.0, 0.0],
+							  [0.0, 0.0, 100.0, 0.0,   0.0, 0.0],
+							  [0.0, 0.0, 0.0,   0.1,   0.0, 0.0],
+							  [0.0, 0.0, 0.0,   0.0,   0.1, 0.0],
+							  [0.0, 0.0, 0.0,   0.0,   0.0, 100.0]])
+		self.Ez = numpy.array([
+							  [25, 0],
+							  [0, 25]])
 
 		#-----------------------------------------------------------------------------
 		# VARIABLES THAT DO NOT CHANGE
@@ -145,16 +162,8 @@ class KalmanFilter():
 if __name__ == "__main__":
 	#Ex and Ez may be adjusted to attempt to get better performance. These are the
 	#default values given in Learning Suite.
-	Ex = numpy.array([
-			  [0.1, 0.0, 0.0,   0.0,   0.0, 0.0],
-                          [0.0, 0.1, 0.0,   0.0,   0.0, 0.0],
-                          [0.0, 0.0, 100.0, 0.0,   0.0, 0.0],
-                          [0.0, 0.0, 0.0,   0.1,   0.0, 0.0],
-                          [0.0, 0.0, 0.0,   0.0,   0.1, 0.0],
-                          [0.0, 0.0, 0.0,   0.0,   0.0, 100.0]])
-	Ez = numpy.array([
-			  [25, 0],
-                          [0, 25]])
+	# Ex =
+	# Ez =
 
 	k = KalmanFilter(Ex=Ex,Ez=Ez)
 

@@ -12,7 +12,8 @@ from AI.KalmanAgents import *
 
 PLAYER = 'red'
 LOG_FILENAME = 'log.log'
-TIME_PER_TICK = 0.05
+TIME_PER_TICK = 0.1
+# TIME_PER_TICK = 1
 hello_var = 0
 state = None
 messenger = None
@@ -77,8 +78,9 @@ def main():
         # set up enemy, including port, messenger, and state
         enemy_messenger = Messenger(enemy_port, 'localhost')
         enemy_state = State(enemy_messenger, 'blue')
-        # ConstantVelocityClayPigeon('0', enemy_state)
-        NonConformingClayPigeon('0', enemy_state)
+        # StationaryClayPigeon('0', enemy_state)
+        ConstantVelocityClayPigeon('0', enemy_state)
+        # NonConformingClayPigeon('0', enemy_state)
         KalmanAgent('0', enemy_player, state)
 
 
