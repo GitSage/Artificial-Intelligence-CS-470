@@ -10,9 +10,6 @@ class Agent:
         self.tank_index = tank_index
         self.state = state
 
-    pass
-
-
 class ReallyDumbAgent(Agent):
 
     def __init__(self, tank_index, state):

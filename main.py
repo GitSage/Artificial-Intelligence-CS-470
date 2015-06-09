@@ -12,7 +12,7 @@ from AI.KalmanAgents import *
 
 PLAYER = 'red'
 LOG_FILENAME = 'log.log'
-TIME_PER_TICK = 0.1
+TIME_PER_TICK = 0.05
 hello_var = 0
 state = None
 messenger = None
@@ -77,22 +77,20 @@ def main():
         # set up enemy, including port, messenger, and state
         enemy_messenger = Messenger(enemy_port, 'localhost')
         enemy_state = State(enemy_messenger, 'blue')
-        StationaryClayPigeon('0', enemy_state)
+        # ConstantVelocityClayPigeon('0', enemy_state)
+        NonConformingClayPigeon('0', enemy_state)
+        KalmanAgent('0', enemy_player, state)
+
 
     # no lab was specified
     else:
-        pass
-        # assign agents to tanks
-        # ReallyDumbAgent('0', state)
-        # BayesianGridSearchAgent('1', bay_vis, bay_filter, state)
-        # BayesianGridSearchAgent('2', state)
-        # BayesianGridSearchAgent('3', state)
-        # PDFlagRetriever('4', 'purple', state)
-        # PDFlagRetriever('5', 'purple', state)
-        # PDFlagRetriever('6', 'purple', state)
-        # PDFlagRetriever('7', 'green', state)
-        # PDFlagRetriever('8', 'green', state)
-        # PDFlagRetriever('9', 'green', state)
+        ReallyDumbAgent('0', state)
+        PDFlagRetriever('4', 'purple', state)
+        PDFlagRetriever('5', 'purple', state)
+        PDFlagRetriever('6', 'purple', state)
+        PDFlagRetriever('7', 'green', state)
+        PDFlagRetriever('8', 'green', state)
+        PDFlagRetriever('9', 'green', state)
 
     while 1:
         timer.tick()

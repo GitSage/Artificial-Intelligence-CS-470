@@ -47,7 +47,8 @@ class Messenger:
         return msg
 
     def othertanks(self):
-        self.sock.send("othertanks")
+        msg = self.get_list_from_response(self.sock.send("othertanks"))
+        return msg
 
     def constants(self):
         self.sock.send("constants")
