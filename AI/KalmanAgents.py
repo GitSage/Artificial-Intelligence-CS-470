@@ -4,8 +4,8 @@ import Agents
 import math
 from Timer import Timer
 import numpy as npy
-# import matplotlib
-# import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
 from KalmanFilter import KalmanFilter
 from PDController import PDController
 import time
@@ -20,7 +20,7 @@ class StationaryClayPigeon(ClayPigeonAgent):
 class ConstantVelocityClayPigeon(ClayPigeonAgent):
     def __init__(self, tank_index, state):
         self.state = state
-        self.state.mytanks['0'].speed(.6)
+        self.state.mytanks['0'].speed(.2)
 
 class NonConformingClayPigeon(ClayPigeonAgent):
     def __init__(self, tank_index, state):
@@ -36,6 +36,7 @@ class KalmanAgent(Agents.Agent):
         self.tank_index = tank_index
         self.pdc = PDController()
         self.timer_id = Timer.add_task(self.update)
+        self.kvis = KalmanVisualizer(800, 800)
         self.kfilter = KalmanFilter()
 
     def update(self):
@@ -66,13 +67,13 @@ class KalmanAgent(Agents.Agent):
         # step 1: Kalman Filter
         ut, width, height = self.kfilter.update(npy.array([[target.x], [target.y]]))
         xpos, xvel, xacc, ypos, yvel, yacc = ut
-        print "Observed location: ", target.x, target.y
-        print "Result of Kalman Filter: ", xpos, xvel, xacc, ypos, yvel, yacc
 
         # step 2: bullet travel time
         t = math.sqrt((tank.x - target.x) ** 2 + (tank.y - target.y) ** 2) / 100
         hitzone_x = xpos + xvel*t + 0.5  # * xacc * t**2 + 100 * math.cos(tank.x) * t
         hitzone_y = ypos + yvel*t + 0.5  # * yacc * t**2 + 100 * math.sin(tank.y) * t
+        self.kvis.update(xpos, ypos, width, target.x, target.y, hitzone_x, hitzone_y)
+
 
         # step 3: PDController to find angular velocity
         ang = self.ang(hitzone_x, hitzone_y)
@@ -94,29 +95,42 @@ class KalmanAgent(Agents.Agent):
             angle -= 2 * math.pi
         return angle
 
-# class KalmanVisualizer:
-#     def __init__(self, width, height):
-#         plt.ion()
-#         self.x = 0
-#         self.y = 0
-#         self.r = 100
-#         self.circle = plt.Circle((self.x, self.y), self.r, color='b')
-#         plt.axis([-width/2, width/2, -height/2, height/2])
-#
-#         plt.gca().add_patch(self.circle)
-#         plt.show()
-#
-#     def update(self, x, y, r):
-#         self.circle.center = x, y
-#         self.circle.radius = r
-#         plt.draw()
-#
-# if __name__ == "__main__":
-#     vis = KalmanVisualizer(800, 800)
-#     vis.update(0, 0, 10)
-#     time.sleep(1)
-#     vis.update(100, 100, 100)
-#     time.sleep(1)
-#     vis.update(-100, -100, 150)
-#     while 1:
-#         pass
+class KalmanVisualizer:
+    def __init__(self, width, height):
+        plt.title("Kalman Visualizer")
+        plt.ion()
+        self.kx = 0
+        self.ky = 0
+        self.kr = 100
+        self.ox = 0
+        self.oy = 0
+        self.tx = 0
+        self.ty = 0
+        self.kalman = plt.Circle((self.kx, self.ky), self.kr, color='b', label='Kalman estimate')
+        self.observed = plt.Circle((self.ox, self.oy), 5, color='g', label='Observed location')
+        self.target = plt.Circle((self.tx, self.ty), 5, color='r', label='Targeted location')
+        plt.axis([-width/2, width/2, -height/2, height/2])
+
+        plt.gca().add_patch(self.kalman)
+        plt.gca().add_patch(self.observed)
+        plt.gca().add_patch(self.target)
+        plt.legend()
+        plt.show()
+
+    def update(self, kx, ky, kr, ox, oy, tx, ty):
+        self.kalman.center = kx, ky
+        self.kalman.radius = kr
+        self.observed.center = ox, oy
+        self.target.center = tx, ty
+
+        plt.draw()
+
+if __name__ == "__main__":
+    vis = KalmanVisualizer(800, 800)
+    vis.update(0, 0, 10)
+    time.sleep(1)
+    vis.update(100, 100, 100)
+    time.sleep(1)
+    vis.update(-100, -100, 150)
+    while 1:
+        pass
