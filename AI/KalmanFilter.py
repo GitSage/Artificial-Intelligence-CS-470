@@ -20,9 +20,8 @@ class KalmanFilter():
 
 		# ------------------ F ---------------
 		# Learning Suite: F
-		# Packet: A
 		# Description: a physics matrix
-		dt = Timer.TIME_PER_TICK
+		dt = Timer.Timer.TIME_PER_TICK
                 c = 0
                 self.F = numpy.array([
 	                [1, dt, dt**2/2, 0, 0, 0],
@@ -34,48 +33,27 @@ class KalmanFilter():
 
 
 		# ------------------ F^T ---------------
+		# Learning Suite: F^T
 		# Description: Transpose of F
-		self.Ft = self.F.transpose()
+		self.FT = self.F.transpose()
 
 		# ------------------ H ---------------
-		# Learning Suite: H_k
-		# Packet: H_k
+		# Learning Suite: H
 		# Description: converts from state to sensor reading
 		self.H = numpy.array([
 			[1, 0, 0, 0, 0, 0],
                         [0, 0, 0, 1, 0, 0]])
 
 		# ------------------ H^T ---------------
+		# Learning Suite: H^T
 		# Description: Transpose of H
-		self.Ht = self.H.transpose()
+		self.HT = self.H.transpose()
 
 
-		#-----------------------------------------------------------------------------
-		# VARIABLES THAT CHANGE/ARE UPDATED
-		#-----------------------------------------------------------------------------
-
-		# ------------------ xt ---------------
-		# Learning Suite: Xt+1∼N(FXt,Σx)
-		# Packet: the xk in "xk = Ak(xk-1) + Bk(uk) + wk"
-		# Description: Predicted state value (Prior)
-
-		# Starting off predicting that it is completely still.
-		self.xt = [0,0,0,0,0,0]
-
-
-		#-----------------------------------------------------------------------------
-		# DELETE
-		#-----------------------------------------------------------------------------
-
-		#K_tplus1 = Ek H^T (H Ek H^T + Ez)^(-1)
-		#(K_tplus1) (K_k) ("Kalman Gain": Higher if sensor is more certain. Lower if sensor is more uncertain (high variance).)
-		self.kalmanGain = 0
-
-		#(z_tplus1) (Z_k) (predicted observation)
-		self.predictedObservation = 0
-
-		#Sigma_t (E_{k-1}) (previous "variance posterior")
-		self.Et = numpy.array([
+		# ------------------ E0 ---------------
+		# Learning Suite: E_0
+		# Description: Our initial guess of Et
+		self.E0 = numpy.array([
 			  [100.0, 0.0, 0.0, 0.0,   0.0, 0.0],
                           [0.0,   0.1, 0.0, 0.0,   0.0, 0.0],
                           [0.0,   0.0, 0.1, 0.0,   0.0, 0.0],
@@ -83,89 +61,90 @@ class KalmanFilter():
                           [0.0,   0.0, 0.0, 0.0,   0.1, 0.0],
                           [0.0,   0.0, 0.0, 0.0,   0.0, 0.1]])
 
-		#Mean and Variance of X_k (x_k is Gaussian a.k.a. Normal distribution)
-		#ut = F u^_{k-1} + B uk
-		#Ek = A E_{k-1} A^T + Ex
+		# ------------------ u0 ---------------
+		# Learning Suite: u_0
+		# Description: Our initial guess of ut
+		self.u0 = numpy.array([
+			[0],
+		        [0],
+		        [0],
+		        [0],
+		        [0],
+		        [0]
+		])
 
-		#(Ek) (E_k) (variance prior (of the predicted state))
-		self.variancePrior = 0
-
-		#(ut) (u-_k) (mean of the predicted state)
-		self.priorMean = 0
-
-
-
-
-		#u_{t+1} (u^_t)
-		self.posteriorMean = 0
-
-		#Identity matrix
-		self.I = 0
+		# ------------------ I ---------------
+		# Learning Suite: I
+		# Description: Identity Matrix
+		self.I = numpy.array([
+			  [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                          [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                          [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+                          [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                          [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                          [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
 
 
 
-	def update(self, uk):
+		#-----------------------------------------------------------------------------
+		# VARIABLES THAT CHANGE/ARE UPDATED
+		#-----------------------------------------------------------------------------
+
+		# ------------------ Et ---------------
+		# Learning Suite: E_t
+		# Description: Previous estimated covariance
+		self.Et = numpy.copy(self.E0)
+
+		# ------------------ ut ---------------
+		# Learning Suite: u_t
+		# Description: Previous estimated mean
+		self.ut = numpy.copy(self.u0)
+
+
+
+	def update(self, zt):
 		'''
-		Do Bayesian Kalman-Filter update. (Get new prior based on observation.)
-		:param uk: The observation (from the sensor)
-		:return: A sample point from the Posterior distribution (A Gaussian distribution
-		with mean u^_k and variance E^_K).
+		Do Bayesian Kalman-Filter update.
+		:param zt: The observation from the server. This is a "2 x 1"-dimension matrix
+			   containing the (x,y) position coordinates of the tank.
+		:return: A tuple containing the estimated mean ("self.ut") and the ellipse width
+		("a"), and the ellipse height ("b").
 		'''
 
-		# ------------------ xt ---------------
-		# Learning Suite: Xt+1∼N(FXt,Σx)
-		# Packet: the xk in "xk = Ak(xk-1) + Bk(uk) + wk"
-		# Description: Predicted state value (Prior)
-		mean = self.F.dot(self.xt)
-		covariance = self.Ex
-		self.xt = numpy.random.multivariate_normal(mean, covariance)
+		# -------------------- Update Kt --------------------
+		#(F)(Et)(FT) + Ex
+		F_Et_FT_plus_Ex = numpy.add(self.F.dot(self.Et).dot(self.FT), self.Ex)
 
-		# ------------------ zt ---------------
-		# Learning Suite: Zt∼N(HXt,ΣZ)
-		# Packet: the zk in "zk = Hk * xk + vk"
-		self.zt = numpy.random.multivariate_normal(self.H.dot(self.xt), self.Ez)
+		#(H * ((F)(Et)(FT) + Ex) * HT) + Ez
+		hugeTerm = numpy.add(self.H.dot(F_Et_FT_plus_Ex).dot(self.HT), self.Ez)
 
 		#Kalman gain
-		self.kalmanGain = self.variancePrior * self.Ht * ((self.H * self.variancePrior * self.Ht) + self.Ez)
+		#(Inverse code from http://stackoverflow.com/questions/21638895/inverse-of-a-matrix-using-numpy)
+		Kt = F_Et_FT_plus_Ex.dot(self.HT).dot(numpy.linalg.inv(hugeTerm))
 
-		#mean posterior
-		#posteriorMean = priorMean + kalmanGain(predictedObservation - H * priorMean)
-		self.meanPosterior = self.priorMean + (self.kalmanGain * (self.predictedObservation - (self.H * self.priorMean)))
+		# -------------------- Update ut --------------------
+		Fut = self.F.dot(self.ut)
+		HFut = self.H.dot(Fut)
+		zt_minus_HFut = numpy.subtract(zt, HFut)
+		self.ut = numpy.add(Fut, Kt.dot(zt_minus_HFut))
 
-		#variance posterior
-		#variancePrior = (I - KH)(variancePrior)
-		self.variancePrior = (self.I - (self.kalmanGain * self.H)) * self.variancePrior
+		# -------------------- Update Et --------------------
+		KtH = Kt.dot(self.H)
+		I_minus_KtH = numpy.subtract(self.I, KtH)
+		self.Et = I_minus_KtH.dot(F_Et_FT_plus_Ex)
 
-	def observationNoise(self):
-		'''
-		Returns a sample value from the N(0, Ez) distribution.
-		:return:
-		'''
-		mu = 0
-		sigma = self.Ez
-		s = numpy.random.normal(mu, sigma, 1)
-		return s
-	def transitionNoise(self):
-		'''
-		Returns a sample value from the N(0, Ex) distribution.
-		:return:
-		'''
-		mu = 0
-		sigma = self.Ex
-		s = numpy.random.normal(mu, sigma, 1)
-		return s
-	def add(self, matrix1, matrix2):
-		matrix3 = [0,0,0,0,0,0]
-		matrix3[0] = matrix1[0] + matrix2[0]
-		matrix3[1] = matrix1[1] + matrix2[1]
-		matrix3[2] = matrix1[2] + matrix2[2]
-		matrix3[3] = matrix1[3] + matrix2[3]
-		matrix3[4] = matrix1[4] + matrix2[4]
-		matrix3[5] = matrix1[5] + matrix2[5]
-		return matrix3
+		# -------- Return relevant variables for visualizing ---------
+		# The ellipse width
+		a = self.Et[0][0]
+
+		# The ellipse height
+		b = self.Et[3][3]
+
+		return (self.ut, a, b)
 
 if __name__ == "__main__":
-	#Sigma_x (R_k) (variance of predicted state noise.)
+	#Ex and Ez may be adjusted to attempt to get better performance. These are the
+	#default values given in Learning Suite.
 	Ex = numpy.array([
 			  [0.1, 0.0, 0.0,   0.0,   0.0, 0.0],
                           [0.0, 0.1, 0.0,   0.0,   0.0, 0.0],
@@ -173,12 +152,12 @@ if __name__ == "__main__":
                           [0.0, 0.0, 0.0,   0.1,   0.0, 0.0],
                           [0.0, 0.0, 0.0,   0.0,   0.1, 0.0],
                           [0.0, 0.0, 0.0,   0.0,   0.0, 100.0]])
-
-	#Sigma_z (Q_k) (variance of observation noise)
 	Ez = numpy.array([
 			  [25, 0],
                           [0, 25]])
 
 	k = KalmanFilter(Ex=Ex,Ez=Ez)
+
+
 	print k.observationNoise()
 	print k.transitionNoise()
