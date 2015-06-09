@@ -7,6 +7,7 @@ class State:
     def __init__(self, messenger, me):
         self.messenger = messenger
         self.mytanks = {}
+        self.othertanks = {}
         self.obstacles = []
         self.flags = {}
         self.bases = {}
@@ -15,6 +16,7 @@ class State:
 
         logging.debug("Initializing state.")
         self.update_mytanks()
+        self.update_othertanks()
         self.update_obstacles()
         self.update_flags()
         self.update_bases()
@@ -27,6 +29,17 @@ class State:
             t = mytank.split(" ")
             self.mytanks[t[1]] = Tank(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[9], t[10], t[11], t[12],
                                       self.messenger)
+
+    def update_othertanks(self):
+        # othertank [callsign] [color] [status] [flag] [x] [y] [angle]
+        data = self.messenger.othertanks()
+        self.othertanks = {}
+        for othertank in data.split("\n"):
+            t = othertank.split(" ")
+            if t[2] not in self.othertanks:
+                self.othertanks[t[2]] = []
+            self.othertanks[t[2]].append((Tank(index=None, callsign=t[1], color=t[2], status=t[3], flag=t[4], x=t[5], y=t[6],
+                                     angle=t[7])))
 
     def update_obstacles(self):
         # obstacle [x1] [y1] [x2] [y2] ...
@@ -103,20 +116,20 @@ class Me:
 
 class Tank:
 
-    def __init__(self, index, callsign, status, shots_available, time_to_reload, flag, x, y, angle, vx, vy, angvel,
-                 messenger):
-        self.index = int(index)
+    def __init__(self, index=None, callsign=None, status=None, shots_available=None, time_to_reload=None, flag=None,
+                 x=None, y=None, angle=None, vx=None, vy=None, angvel=None, messenger=None, color=None):
+        self.index = None if index is None else int(index)
         self.callsign = callsign
         self.status = status
-        self.shots_available = int(shots_available)
-        self.time_to_reload = float(time_to_reload)
+        self.shots_available = None if shots_available is None else int(shots_available)
+        self.time_to_reload = None if shots_available is None else float(time_to_reload)
         self.flag = flag
-        self.x = int(x)
-        self.y = int(y)
-        self.angle = float(angle)
-        self.vx = float(vx)
-        self.vy = float(vy)
-        self.angvel = float(angvel)
+        self.x = float(x)
+        self.y = float(y)
+        self.angle = None if angle is None else float(angle)
+        self.vx = None if vx is None else float(vx)
+        self.vy = None if vy is None else float(vy)
+        self.angvel = None if angvel is None else float(angvel)
         self.messenger = messenger
 
     def update(self, index, callsign, status, shots_available, time_to_reload, flag, x, y, angle, vx, vy, angvel):

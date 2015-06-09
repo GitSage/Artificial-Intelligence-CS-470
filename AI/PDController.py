@@ -11,17 +11,16 @@ class PDController:
         self.prev_speedx_error = 0
         self.prev_speedy_error = 0
 
-    def get_next_action(self, tank, vec):
-        self.prev_vec = list(self.goal_vec)
+    def get_next_action(self, tank, vec, speed=1):
+        self.prev_vec = list(self.goal_vec)  # clone the old array into a new one
         self.goal_vec = vec
-        next_action = {'angvel': self.get_dir_to_goal(tank), 'speed': 1}
+        next_action = {'angvel': self.get_dir_to_goal(tank), 'speed': speed}
         # print next_action
         return next_action
 
     def get_dir_to_goal(self, tank):
-        # The direction I should be facing minus the direction that I am facing
-        error = self.dir_error(tank)
-        new_dir = 1 * error + (0 * (error - self.prev_dir_error) / Timer.Timer.TIME_PER_TICK)
+        error = self.dir_error(tank)  # The direction I should be facing minus the direction that I am facing
+        new_dir = 1 * error + (0 * (error - self.prev_dir_error) / Timer.Timer.time_passed)
         self.prev_dir_error = error
         return new_dir
 
@@ -29,20 +28,14 @@ class PDController:
         # The direction I should be facing minus the direction that I am facing
         errorx = self.speed_error(vec, self.prev_speedx_error)
         errory = self.speed_error(vec, self.prev_speedy_error)
-        newspeedx = 1 * errorx + 1 * (errorx - self.prev_speedx_error) / Timer.Timer.TIME_PER_TICK
-        newspeedy = 1 * errory + 1 * (errory - self.prev_speedy_error) / Timer.Timer.TIME_PER_TICK
+        newspeedx = 1 * errorx + 1 * (errorx - self.prev_speedx_error) / Timer.Timer.time_passed
+        newspeedy = 1 * errory + 1 * (errory - self.prev_speedy_error) / Timer.Timer.time_passed
         self.prev_speedx_error = errorx
         self.prev_speedy_error = errory
-        print "errorx: ", errorx
-        print "errory: ", errory
-        print "newspeedx: ", newspeedx
-        print "newspeedy: ", newspeedy
-
-        print math.sqrt(newspeedx**2 + newspeedy**2)
         return math.sqrt(newspeedx**2 + newspeedy**2)
 
     def dir_error(self, tank):
-        return self.ang() - tank.angle #ideal angle - actual angle
+        return self.ang() - tank.angle  # ideal angle - actual angle
 
     def speed_error(self, vec, prev_v):
         return self.desired_speed(vec) - prev_v  # ideal speed - actual speed

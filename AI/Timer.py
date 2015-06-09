@@ -5,7 +5,7 @@ __author__ = 'ben'
 class Timer:
     todo = []  # static
     TIME_PER_TICK = 0.0
-    time_passed = 0.0
+    time_passed = 0.01
 
     def __init__(self, time_per_sleep):
         Timer.TIME_PER_TICK = time_per_sleep
@@ -31,11 +31,13 @@ class Timer:
         start = time.time()
         for task in cls.todo:
             task()
-        spent = start - time.time()
+        spent = time.time() - start
 
         # if spent is less than TIME_PER_TICK, sleep the remaining period
         to_sleep = max(0, cls.TIME_PER_TICK - spent)
         time.sleep(to_sleep)
+        if spent > cls.TIME_PER_TICK:
+            print "Warning: spent too much time this tick! %fs" % spent
 
         # update cls.time_passed with the true amount of time that passed
         cls.time_passed = max(cls.TIME_PER_TICK, spent)
